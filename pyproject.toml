@@ -1,0 +1,19 @@
+[project]
+name = "ux-insight-env"
+version = "0.1.0"
+description = "RL environment simulating a UX analyst reviewing e-commerce behavioral analytics data to produce actionable UI/UX improvement recommendations."
+requires-python = ">=3.10"
+dependencies = [
+    "openenv-core>=0.1.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "pydantic>=2.0.0",
+    "openai>=1.0.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

@@ -1,0 +1,15 @@
+spec_version: 1
+name: ux-insight-env
+type: environment
+runtime: python
+app: server/app.py
+port: 7860
+description: "RL environment simulating a UX analyst reviewing e-commerce behavioral analytics data (heatmaps, rage clicks, funnels) to produce actionable UI/UX improvement recommendations."
+tags:
+  - openenv
+  - rl
+  - ux-analysis
+  - ecommerce
+  - behavioral-analytics
+  - product-improvement
+enable_web_interface: true
