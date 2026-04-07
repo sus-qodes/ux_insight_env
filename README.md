@@ -1,18 +1,3 @@
----
-title: UX Insight Env
-colorFrom: blue
-colorTo: green
-sdk: docker
-pinned: false
-license: mit
-tags:
-  - openenv
-  - reinforcement-learning
-  - ux-analysis
-  - ecommerce
-  - behavioral-analytics
----
-
 # UX Insight Analyst Environment
 
 `ux-insight-env` is an OpenEnv reinforcement learning environment that simulates the work of a UX analyst reviewing e-commerce behavioral analytics data.
