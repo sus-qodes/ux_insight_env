@@ -11,6 +11,8 @@ The agent receives synthetic but realistic StyleMart analytics data, including h
 - Health check: https://sushere-ux-insight-env.hf.space/health
 - Reset endpoint: https://sushere-ux-insight-env.hf.space/reset
 - Web UI: https://sushere-ux-insight-env.hf.space/web
+- Landing page: https://sushere-ux-insight-env.hf.space/
+- Documentation: https://sushere-ux-insight-env.hf.space/documentation
 
 ## Real-World Task
 
@@ -181,15 +183,37 @@ $env:OPENENV_IMAGE = "ux-insight-env:latest"
 py -3.12 inference.py
 ```
 
+To run all baseline models:
+
+PowerShell:
+
+```powershell
+$env:RUN_ALL_BASELINES = "true"
+$env:HF_TOKEN = "hf_your_token_here"
+py -3.12 inference.py
+```
+
 If `HF_TOKEN` is not set, `inference.py` will try to use your cached Hugging Face CLI login token. If `OPENENV_BASE_URL` is empty, the script falls back to launching `OPENENV_IMAGE` locally with OpenEnv's Docker client.
 
 ## Baseline Scores
 
-| Task | Model | Score | Steps | Success |
-|---|---|---:|---:|---|
-| easy | meta-llama/Llama-3.3-70B-Instruct | 0.8867 | 1 | True |
-| medium | meta-llama/Llama-3.3-70B-Instruct | 0.5226 | 3 | True |
-| hard | meta-llama/Llama-3.3-70B-Instruct | 0.8448 | 6 | True |
+| Task | Model | Params | Score | Steps | Success |
+|---|---|---:|---:|---:|---|
+| easy | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.8867 | 1 | True |
+| medium | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.5226 | 3 | True |
+| hard | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.8448 | 6 | True |
+| easy | meta-llama/Llama-4-Maverick-17B-128E-Instruct | 17Bx128E | -- | 1 | -- |
+| medium | meta-llama/Llama-4-Maverick-17B-128E-Instruct | 17Bx128E | -- | 3 | -- |
+| hard | meta-llama/Llama-4-Maverick-17B-128E-Instruct | 17Bx128E | -- | 6 | -- |
+| easy | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | -- | 1 | -- |
+| medium | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | -- | 3 | -- |
+| hard | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | -- | 6 | -- |
+| easy | google/gemma-4-31b-it | 31B | -- | 1 | -- |
+| medium | google/gemma-4-31b-it | 31B | -- | 3 | -- |
+| hard | google/gemma-4-31b-it | 31B | -- | 6 | -- |
+| easy | Qwen/Qwen3.5-9B | 9B | -- | 1 | -- |
+| medium | Qwen/Qwen3.5-9B | 9B | -- | 3 | -- |
+| hard | Qwen/Qwen3.5-9B | 9B | -- | 6 | -- |
 
 Run details:
 
@@ -198,6 +222,7 @@ Run details:
 - Environment endpoint: `https://sushere-ux-insight-env.hf.space`
 - Deterministic seeds: easy `101`, medium `202`, hard `303`
 - Success threshold: `0.5`
+- Multi-model baselines: set `RUN_ALL_BASELINES=true` to evaluate all models
 - Note: the hard-task baseline scored high in this run because the model identified most issue pages and one red-herring page successfully.
 
 ## End-to-End Walkthrough
@@ -230,6 +255,9 @@ ux_insight_env/
   openenv.yaml
   pyproject.toml
   README.md
+  static/
+    index.html
+    docs.html
   server/
     app.py
     data_generator.py

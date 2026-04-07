@@ -26,6 +26,17 @@ HF_TOKEN     = os.environ.get("HF_TOKEN") or (get_token() if get_token else "") 
 API_KEY      = HF_TOKEN  # HF token used as the API key
 
 # ---------------------------------------------------------------------------
+# Multi-model baselines
+# ---------------------------------------------------------------------------
+BASELINE_MODELS: List[str] = [
+    MODEL_NAME,
+    "google/gemma-4-31b-it",
+    "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+    "meta-llama/Llama-4-Maverick-17B-128E-Instruct",
+    "Qwen/Qwen3.5-9B",
+]
+
+# ---------------------------------------------------------------------------
 # Evaluation settings
 # ---------------------------------------------------------------------------
 IMAGE_NAME          = os.environ.get("OPENENV_IMAGE", "ux-insight-env:latest")
@@ -111,6 +122,7 @@ def get_agent_action(
     client: OpenAI,
     observation_text: str,
     history: List[str],
+    model_name: str = MODEL_NAME,
 ) -> str:
     """Call the LLM to get the agent's action as JSON."""
     history_context = "\n".join(history[-3:]) if history else "No previous steps."
@@ -126,7 +138,7 @@ Respond ONLY with a valid JSON object for the UXAction schema."""
 
     try:
         completion = client.chat.completions.create(
-            model=MODEL_NAME,
+            model=model_name,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
@@ -232,7 +244,7 @@ def make_fallback_action_dict() -> dict:
 # Main evaluation loop
 # ---------------------------------------------------------------------------
 
-async def run_task(task_name: str) -> float:
+async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
     """Run one task and return the final normalized score."""
     try:
         from ux_insight_env.client import UXInsightEnv
@@ -250,7 +262,7 @@ async def run_task(task_name: str) -> float:
     score = 0.0
     success = False
 
-    log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
+    log_start(task=task_name, env=BENCHMARK, model=model_name)
 
     env = None
     try:
@@ -268,7 +280,7 @@ async def run_task(task_name: str) -> float:
 
             # Format observation for LLM
             obs_text = format_observation_for_llm(obs)
-            action_json_str = get_agent_action(client, obs_text, history)
+            action_json_str = get_agent_action(client, obs_text, history, model_name=model_name)
 
             # Parse and validate action
             try:
@@ -332,17 +344,57 @@ async def run_task(task_name: str) -> float:
     return score
 
 
-async def main() -> None:
-    all_scores = {}
+async def run_single_model(model_name: str) -> dict:
+    """Run all tasks for a single model. Returns {task: score}."""
+    scores = {}
     for task in ["easy", "medium", "hard"]:
-        print(f"[DEBUG] === Running task: {task} ===", flush=True)
-        score = await run_task(task)
-        all_scores[task] = score
-        print(f"[DEBUG] Task '{task}' final score: {score:.4f}", flush=True)
+        print(f"[DEBUG] === {model_name} | task: {task} ===", flush=True)
+        score = await run_task(task, model_name=model_name)
+        scores[task] = score
+        print(f"[DEBUG] {model_name} | {task} score: {score:.4f}", flush=True)
+    return scores
 
-    print("\n[DEBUG] === BASELINE RESULTS ===", flush=True)
-    for task, s in all_scores.items():
-        print(f"[DEBUG]   {task:8s}: {s:.4f}", flush=True)
+
+async def main() -> None:
+    # Determine which models to run
+    run_all = os.environ.get("RUN_ALL_BASELINES", "").lower() in ("1", "true", "yes")
+    models = BASELINE_MODELS if run_all else [MODEL_NAME]
+
+    all_results: dict = {}  # {model_name: {task: score}}
+    for model in models:
+        print(f"\n[DEBUG] {'='*60}", flush=True)
+        print(f"[DEBUG] RUNNING MODEL: {model}", flush=True)
+        print(f"[DEBUG] {'='*60}", flush=True)
+        all_results[model] = await run_single_model(model)
+
+    # Print summary table
+    print("\n[DEBUG] === MULTI-MODEL BASELINE RESULTS ===", flush=True)
+    print(f"[DEBUG] {'Model':<55} {'Easy':>6} {'Medium':>8} {'Hard':>6} {'Avg':>6}", flush=True)
+    print(f"[DEBUG] {'-'*55} {'-'*6} {'-'*8} {'-'*6} {'-'*6}", flush=True)
+    for model, scores in all_results.items():
+        avg = sum(scores.values()) / len(scores) if scores else 0.0
+        print(
+            f"[DEBUG] {model:<55} {scores.get('easy', 0):.4f} {scores.get('medium', 0):.4f} "
+            f"{scores.get('hard', 0):.4f} {avg:.4f}",
+            flush=True,
+        )
+
+    # Save results to JSON
+    output = {
+        "benchmark": BENCHMARK,
+        "endpoint": API_BASE_URL,
+        "environment": ENV_BASE_URL,
+        "seeds": TASK_SEEDS,
+        "results": {
+            model: {"scores": scores, "avg": sum(scores.values()) / len(scores)}
+            for model, scores in all_results.items()
+        },
+    }
+    results_path = os.path.join("outputs", "evals", "baseline_results.json")
+    os.makedirs(os.path.dirname(results_path), exist_ok=True)
+    with open(results_path, "w") as f:
+        json.dump(output, f, indent=2)
+    print(f"\n[DEBUG] Results saved to {results_path}", flush=True)
 
 
 if __name__ == "__main__":
