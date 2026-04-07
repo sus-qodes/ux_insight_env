@@ -15,14 +15,21 @@
   --heading: #fafafa;
   --white: #fff;
   --code-bg: #0c0c0e;
+  --accent: #3b82f6;
+  --accent-dim: #2563eb;
+  --accent-subtle: rgba(59,130,246,0.08);
+  --accent-border: rgba(59,130,246,0.25);
+  --green: #22c55e;
+  --red: #ef4444;
+  --amber: #f59e0b;
   --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
-a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
-a:hover { color: var(--text-bright); }
+a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: #60a5fa; }
 code { font-family: var(--mono); font-size: 13px; background: var(--code-bg); padding: 1px 5px; border: 1px solid var(--border); }
 pre { background: var(--code-bg); border: 1px solid var(--border); padding: 16px 20px; overflow-x: auto; line-height: 1.6; color: var(--text-bright); }
 pre code { background: none; border: none; padding: 0; }
@@ -41,14 +48,15 @@ nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bott
 nav .logo { color: var(--white); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none; white-space: nowrap; }
 nav .links { display: flex; gap: 24px; flex-wrap: wrap; }
 nav .links a { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
-nav .links a:hover, nav .links a.active { color: var(--white); }
+nav .links a:hover { color: var(--accent); }
+nav .links a.active { color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
 
 /* Layout */
 .layout { display: flex; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 49px); }
 .sidebar { width: 240px; flex-shrink: 0; border-right: 1px solid var(--border); padding: 24px 20px; position: sticky; top: 49px; height: calc(100vh - 49px); overflow-y: auto; }
 .sidebar a { display: block; padding: 5px 0; color: var(--text); text-decoration: none; font-size: 13px; }
-.sidebar a:hover { color: var(--white); }
-.sidebar .section-title { color: var(--text); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin: 16px 0 6px; font-weight: 600; }
+.sidebar a:hover { color: var(--accent); padding-left: 4px; transition: all 0.15s; }
+.sidebar .section-title { color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin: 16px 0 6px; font-weight: 600; }
 .sidebar .section-title:first-child { margin-top: 0; }
 .content { flex: 1; padding: 24px 40px 80px; max-width: 800px; }
 @media (max-width: 768px) {
@@ -69,17 +77,32 @@ td code { font-size: 12px; }
 
 .text-white { color: var(--white); }
 .text-muted { color: var(--text); font-size: 13px; }
+.text-accent { color: var(--accent); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
 .mono { font-family: var(--mono); }
 .mt-8 { margin-top: 8px; }
 .mt-16 { margin-top: 16px; }
 .mb-8 { margin-bottom: 8px; }
+
+/* Section accent bar */
+h2::before { content: ''; display: inline-block; width: 3px; height: 16px; background: var(--accent); margin-right: 10px; vertical-align: middle; }
+
+/* Table hover */
+tr:hover td { background: var(--accent-subtle); }
+
+/* Code inline accent */
+td code { background: var(--surface-2); border-color: var(--border); }
+
+/* Logo accent */
+nav .logo span { color: var(--accent); }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a href="/" class="logo">UX Insight Analyst</a>
+    <a href="/" class="logo">UX <span>Insight</span> Analyst</a>
     <div class="links">
       <a href="/">Overview</a>
       <a href="/documentation" class="active">Docs</a>
@@ -317,11 +340,11 @@ curl -X POST https://sushere-ux-insight-env.hf.space/step \
     <table>
       <thead><tr><th>Dimension</th><th>Weight</th><th>Method</th></tr></thead>
       <tbody>
-        <tr><td>Element identification</td><td>25%</td><td>Keyword overlap (Jaccard) between agent element and ground truth</td></tr>
-        <tr><td>Issue category</td><td>20%</td><td>Exact match = 1.0, related category = 0.5, else 0.0</td></tr>
-        <tr><td>Severity</td><td>15%</td><td>Exact = 1.0, off-by-one = 0.5, else 0.0</td></tr>
-        <tr><td>Recommendation</td><td>25%</td><td>Keyword coverage against expected keywords + element mention + length check</td></tr>
-        <tr><td>Fix category</td><td>15%</td><td>Exact match = full, compatible pair = half</td></tr>
+        <tr><td>Element identification</td><td class="text-accent">25%</td><td>Keyword overlap (Jaccard) between agent element and ground truth</td></tr>
+        <tr><td>Issue category</td><td class="text-accent">20%</td><td>Exact match = 1.0, related category = 0.5, else 0.0</td></tr>
+        <tr><td>Severity</td><td class="text-accent">15%</td><td>Exact = 1.0, off-by-one = 0.5, else 0.0</td></tr>
+        <tr><td>Recommendation</td><td class="text-accent">25%</td><td>Keyword coverage against expected keywords + element mention + length check</td></tr>
+        <tr><td>Fix category</td><td class="text-accent">15%</td><td>Exact match = full, compatible pair = half</td></tr>
       </tbody>
     </table>
 
@@ -329,9 +352,9 @@ curl -X POST https://sushere-ux-insight-env.hf.space/step \
     <table>
       <thead><tr><th>Agent Response</th><th>Score</th></tr></thead>
       <tbody>
-        <tr><td><code>no_issue</code> + <code>normal_behavior</code> + <code>severity: none</code></td><td>Up to 1.0</td></tr>
-        <tr><td><code>ambiguous</code></td><td>0.20 (partial credit for uncertainty)</td></tr>
-        <tr><td><code>issue</code> (false positive)</td><td>-0.10 penalty</td></tr>
+        <tr><td><code>no_issue</code> + <code>normal_behavior</code> + <code>severity: none</code></td><td class="text-green">Up to 1.0</td></tr>
+        <tr><td><code>ambiguous</code></td><td style="color:var(--amber)">0.20 (partial credit)</td></tr>
+        <tr><td><code>issue</code> (false positive)</td><td class="text-red">-0.10 penalty</td></tr>
       </tbody>
     </table>
 
@@ -346,13 +369,13 @@ curl -X POST https://sushere-ux-insight-env.hf.space/step \
     <table>
       <thead><tr><th>Condition</th><th>Penalty</th></tr></thead>
       <tbody>
-        <tr><td>Duplicate finding (same element + category as prior step)</td><td>-0.40</td></tr>
-        <tr><td>Inconsistent: finding_type="issue" with severity="none"</td><td>-0.20</td></tr>
-        <tr><td>Overconfident wrong: grade &lt; 0.3 and confidence &gt; 0.8</td><td>-0.10</td></tr>
-        <tr><td>Trivial recommendation: under 10 characters</td><td>-0.15</td></tr>
-        <tr><td>Invalid issue_category or fix_category</td><td>-0.20</td></tr>
-        <tr><td>no_issue finding with severity not "none"</td><td>Action rejected</td></tr>
-        <tr><td>issue finding with fix_category "no_fix_needed"</td><td>Action rejected</td></tr>
+        <tr><td>Duplicate finding (same element + category as prior step)</td><td class="text-red">-0.40</td></tr>
+        <tr><td>Inconsistent: finding_type="issue" with severity="none"</td><td class="text-red">-0.20</td></tr>
+        <tr><td>Overconfident wrong: grade &lt; 0.3 and confidence &gt; 0.8</td><td class="text-red">-0.10</td></tr>
+        <tr><td>Trivial recommendation: under 10 characters</td><td class="text-red">-0.15</td></tr>
+        <tr><td>Invalid issue_category or fix_category</td><td class="text-red">-0.20</td></tr>
+        <tr><td>no_issue finding with severity not "none"</td><td class="text-red">Action rejected</td></tr>
+        <tr><td>issue finding with fix_category "no_fix_needed"</td><td class="text-red">Action rejected</td></tr>
       </tbody>
     </table>
 
@@ -361,10 +384,10 @@ curl -X POST https://sushere-ux-insight-env.hf.space/step \
     <table>
       <thead><tr><th>Bonus</th><th>Applies To</th><th>Range</th></tr></thead>
       <tbody>
-        <tr><td>Priority ordering (severity ranking across findings)</td><td>medium, hard</td><td>0.00 to +0.10</td></tr>
-        <tr><td>Red herring handling (correct no_issue on trap pages)</td><td>hard only</td><td>0.00 to +0.10</td></tr>
-        <tr><td>Impact estimate quality (specificity of metric predictions)</td><td>hard only</td><td>0.00 to +0.05</td></tr>
-        <tr><td>False positive penalty</td><td>all</td><td>-0.05 per FP</td></tr>
+        <tr><td>Priority ordering (severity ranking across findings)</td><td>medium, hard</td><td class="text-green">0.00 to +0.10</td></tr>
+        <tr><td>Red herring handling (correct no_issue on trap pages)</td><td>hard only</td><td class="text-green">0.00 to +0.10</td></tr>
+        <tr><td>Impact estimate quality (specificity of metric predictions)</td><td>hard only</td><td class="text-green">0.00 to +0.05</td></tr>
+        <tr><td>False positive penalty</td><td>all</td><td class="text-red">-0.05 per FP</td></tr>
       </tbody>
     </table>
 

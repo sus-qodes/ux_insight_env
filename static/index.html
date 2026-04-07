@@ -15,14 +15,23 @@
   --heading: #fafafa;
   --white: #fff;
   --code-bg: #0c0c0e;
+  --accent: #3b82f6;
+  --accent-dim: #2563eb;
+  --accent-subtle: rgba(59,130,246,0.08);
+  --accent-border: rgba(59,130,246,0.25);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --amber: #f59e0b;
   --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
-a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
-a:hover { color: var(--text-bright); }
+a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: #60a5fa; }
 code, pre { font-family: var(--mono); font-size: 13px; }
 pre { background: var(--code-bg); border: 1px solid var(--border); padding: 16px 20px; overflow-x: auto; line-height: 1.6; color: var(--text-bright); }
 h1, h2, h3, h4 { color: var(--heading); font-weight: 600; letter-spacing: -0.02em; }
@@ -40,21 +49,22 @@ nav .container { display: flex; align-items: center; gap: 32px; }
 nav .logo { color: var(--white); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none; white-space: nowrap; }
 nav .links { display: flex; gap: 24px; flex-wrap: wrap; }
 nav .links a { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
-nav .links a:hover { color: var(--white); }
+nav .links a:hover { color: var(--accent); }
 
 /* Hero */
 .hero { padding: 72px 0 56px; border-bottom: 1px solid var(--border); }
 .hero h1 { font-size: 36px; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.2; }
+.hero h1 span { color: var(--accent); }
 .hero .subtitle { font-size: 17px; color: var(--text-bright); max-width: 680px; margin-bottom: 28px; }
 .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn { display: inline-block; padding: 10px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; border: 1px solid var(--border); transition: all 0.15s; }
-.btn-primary { background: var(--white); color: var(--bg); border-color: var(--white); }
-.btn-primary:hover { background: var(--text-bright); color: var(--bg); }
+.btn-primary { background: var(--accent); color: var(--white); border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-dim); border-color: var(--accent-dim); }
 .btn-secondary { background: transparent; color: var(--text-bright); }
-.btn-secondary:hover { background: var(--surface-2); color: var(--white); }
+.btn-secondary:hover { background: var(--accent-subtle); color: var(--accent); border-color: var(--accent-border); }
 
 /* Tag */
-.tag { display: inline-block; padding: 2px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--border); color: var(--text); margin-right: 6px; }
+.tag { display: inline-block; padding: 2px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--accent-border); color: var(--accent); margin-right: 6px; background: var(--accent-subtle); }
 
 /* Grid */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -62,15 +72,16 @@ nav .links a:hover { color: var(--white); }
 @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
 /* Card */
-.card { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
+.card { background: var(--surface); border: 1px solid var(--border); padding: 24px; transition: border-color 0.2s; }
+.card:hover { border-color: var(--accent-border); }
 .card h3 { margin-bottom: 8px; }
-.card .num { font-size: 32px; font-weight: 700; color: var(--white); font-family: var(--mono); margin-bottom: 4px; }
+.card .num { font-size: 32px; font-weight: 700; color: var(--accent); font-family: var(--mono); margin-bottom: 4px; }
 
 /* Table */
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th { text-align: left; color: var(--text); font-weight: 500; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em; padding: 10px 12px; border-bottom: 1px solid var(--border); }
 td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-bright); }
-tr:hover td { background: var(--surface); }
+tr:hover td { background: var(--accent-subtle); }
 td code { background: var(--code-bg); padding: 1px 5px; border: 1px solid var(--border); font-size: 12px; }
 
 /* Metric row */
@@ -82,7 +93,7 @@ td code { background: var(--code-bg); padding: 1px 5px; border: 1px solid var(--
 /* Steps */
 .step-list { counter-reset: steps; }
 .step-item { counter-increment: steps; padding: 20px 0 20px 48px; border-bottom: 1px solid var(--border); position: relative; }
-.step-item::before { content: counter(steps, decimal-leading-zero); position: absolute; left: 0; top: 20px; font-family: var(--mono); font-size: 14px; color: var(--text); font-weight: 600; }
+.step-item::before { content: counter(steps, decimal-leading-zero); position: absolute; left: 0; top: 20px; font-family: var(--mono); font-size: 14px; color: var(--accent); font-weight: 600; }
 .step-item h3 { font-size: 15px; }
 .step-item p { color: var(--text); margin-top: 4px; }
 
@@ -99,14 +110,34 @@ footer a { color: var(--text-bright); }
 .text-muted { color: var(--text); font-size: 13px; }
 .text-bright { color: var(--text-bright); }
 .text-white { color: var(--white); }
+.text-accent { color: var(--accent); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-amber { color: var(--amber); }
 .mono { font-family: var(--mono); }
+
+/* Colored metric values */
+.metric .value-positive { color: var(--green); font-family: var(--mono); font-weight: 600; }
+.metric .value-negative { color: var(--red); font-family: var(--mono); font-weight: 600; }
+
+/* Score highlight */
+.score-good { color: var(--green); }
+.score-mid { color: var(--amber); }
+.score-na { color: var(--text); }
+
+/* Section accent bar */
+h2::before { content: ''; display: inline-block; width: 3px; height: 16px; background: var(--accent); margin-right: 10px; vertical-align: middle; }
+
+/* Logo accent */
+nav .logo span { color: var(--accent); }
+footer a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="container">
-    <a href="/" class="logo">UX Insight Analyst</a>
+    <a href="/" class="logo">UX <span>Insight</span> Analyst</a>
     <div class="links">
       <a href="#overview">Overview</a>
       <a href="#tasks">Tasks</a>
@@ -126,7 +157,7 @@ footer a { color: var(--text-bright); }
       <span class="tag">Reinforcement Learning</span>
       <span class="tag">UX Analytics</span>
     </div>
-    <h1>UX Insight Analyst Environment</h1>
+    <h1>UX <span>Insight</span> Analyst Environment</h1>
     <p class="subtitle">
       A reinforcement learning environment that benchmarks LLM agents on the real-world task of
       interpreting e-commerce behavioral analytics data and producing actionable UX recommendations.
@@ -251,21 +282,21 @@ footer a { color: var(--text-bright); }
       <div>
         <h3 class="mb-8">Per-Step Grading Weights</h3>
         <div class="card">
-          <div class="metric"><span class="label">Element identification</span><span class="value">25%</span></div>
-          <div class="metric"><span class="label">Issue category</span><span class="value">20%</span></div>
-          <div class="metric"><span class="label">Severity accuracy</span><span class="value">15%</span></div>
-          <div class="metric"><span class="label">Recommendation quality</span><span class="value">25%</span></div>
-          <div class="metric"><span class="label">Fix category</span><span class="value">15%</span></div>
+          <div class="metric"><span class="label">Element identification</span><span class="value-positive">25%</span></div>
+          <div class="metric"><span class="label">Issue category</span><span class="value-positive">20%</span></div>
+          <div class="metric"><span class="label">Severity accuracy</span><span class="value-positive">15%</span></div>
+          <div class="metric"><span class="label">Recommendation quality</span><span class="value-positive">25%</span></div>
+          <div class="metric"><span class="label">Fix category</span><span class="value-positive">15%</span></div>
         </div>
       </div>
       <div>
         <h3 class="mb-8">Anti-Exploit Penalties</h3>
         <div class="card">
-          <div class="metric"><span class="label">Duplicate findings</span><span class="value">-0.40</span></div>
-          <div class="metric"><span class="label">Inconsistent action</span><span class="value">-0.20</span></div>
-          <div class="metric"><span class="label">Trivial recommendation</span><span class="value">-0.15</span></div>
-          <div class="metric"><span class="label">Overconfident + wrong</span><span class="value">-0.10</span></div>
-          <div class="metric"><span class="label">Invalid categories</span><span class="value">-0.20</span></div>
+          <div class="metric"><span class="label">Duplicate findings</span><span class="value-negative">-0.40</span></div>
+          <div class="metric"><span class="label">Inconsistent action</span><span class="value-negative">-0.20</span></div>
+          <div class="metric"><span class="label">Trivial recommendation</span><span class="value-negative">-0.15</span></div>
+          <div class="metric"><span class="label">Overconfident + wrong</span><span class="value-negative">-0.10</span></div>
+          <div class="metric"><span class="label">Invalid categories</span><span class="value-negative">-0.20</span></div>
         </div>
       </div>
     </div>
@@ -329,10 +360,10 @@ curl -X POST https://sushere-ux-insight-env.hf.space/reset \
         <tr>
           <td class="text-white">Llama-3.3-70B-Instruct</td>
           <td class="mono">70B</td>
-          <td class="mono">0.8867</td>
-          <td class="mono">0.5226</td>
-          <td class="mono">0.8448</td>
-          <td class="mono text-white">0.7514</td>
+          <td class="mono score-good">0.8867</td>
+          <td class="mono score-mid">0.5226</td>
+          <td class="mono score-good">0.8448</td>
+          <td class="mono text-accent">0.7514</td>
         </tr>
         <tr>
           <td class="text-white">Llama-4-Maverick-17B-128E</td>
