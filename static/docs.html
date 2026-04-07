@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation -- UX Insight Analyst</title>
+<style>
+:root {
+  --bg: #09090b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --border: #27272a;
+  --text: #a1a1aa;
+  --text-bright: #d4d4d8;
+  --heading: #fafafa;
+  --white: #fff;
+  --code-bg: #0c0c0e;
+  --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
+a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--text-bright); }
+code { font-family: var(--mono); font-size: 13px; background: var(--code-bg); padding: 1px 5px; border: 1px solid var(--border); }
+pre { background: var(--code-bg); border: 1px solid var(--border); padding: 16px 20px; overflow-x: auto; line-height: 1.6; color: var(--text-bright); }
+pre code { background: none; border: none; padding: 0; }
+h1, h2, h3, h4 { color: var(--heading); font-weight: 600; letter-spacing: -0.02em; }
+h1 { font-size: 28px; }
+h2 { font-size: 20px; text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin: 48px 0 20px; }
+h3 { font-size: 16px; margin: 28px 0 10px; }
+h4 { font-size: 14px; margin: 20px 0 8px; color: var(--text-bright); }
+p { margin-bottom: 12px; }
+ul, ol { margin: 0 0 16px 20px; }
+li { margin-bottom: 4px; }
+
+/* Nav */
+nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 0; }
+.nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 32px; }
+nav .logo { color: var(--white); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none; white-space: nowrap; }
+nav .links { display: flex; gap: 24px; flex-wrap: wrap; }
+nav .links a { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
+nav .links a:hover, nav .links a.active { color: var(--white); }
+
+/* Layout */
+.layout { display: flex; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 49px); }
+.sidebar { width: 240px; flex-shrink: 0; border-right: 1px solid var(--border); padding: 24px 20px; position: sticky; top: 49px; height: calc(100vh - 49px); overflow-y: auto; }
+.sidebar a { display: block; padding: 5px 0; color: var(--text); text-decoration: none; font-size: 13px; }
+.sidebar a:hover { color: var(--white); }
+.sidebar .section-title { color: var(--text); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin: 16px 0 6px; font-weight: 600; }
+.sidebar .section-title:first-child { margin-top: 0; }
+.content { flex: 1; padding: 24px 40px 80px; max-width: 800px; }
+@media (max-width: 768px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .content { padding: 24px; }
+}
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0 20px; }
+th { text-align: left; color: var(--text); font-weight: 500; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text-bright); vertical-align: top; }
+td code { font-size: 12px; }
+
+/* Tags */
+.tag { display: inline-block; padding: 1px 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; border: 1px solid var(--border); color: var(--text); }
+.tag-method { border-color: var(--text); color: var(--text-bright); font-family: var(--mono); }
+
+.text-white { color: var(--white); }
+.text-muted { color: var(--text); font-size: 13px; }
+.mono { font-family: var(--mono); }
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mb-8 { margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">UX Insight Analyst</a>
+    <div class="links">
+      <a href="/">Overview</a>
+      <a href="/documentation" class="active">Docs</a>
+      <a href="/web">Playground</a>
+      <a href="/docs">API Schema</a>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="section-title">Getting Started</div>
+    <a href="#overview">Overview</a>
+    <a href="#quickstart">Quick Start</a>
+
+    <div class="section-title">API Reference</div>
+    <a href="#api-health">GET /health</a>
+    <a href="#api-reset">POST /reset</a>
+    <a href="#api-step">POST /step</a>
+    <a href="#api-state">GET /state</a>
+    <a href="#api-web">GET /web</a>
+
+    <div class="section-title">Schemas</div>
+    <a href="#schema-action">UXAction</a>
+    <a href="#schema-observation">UXObservation</a>
+    <a href="#schema-state">UXState</a>
+    <a href="#schema-page">PageAnalyticsData</a>
+
+    <div class="section-title">Environment</div>
+    <a href="#tasks">Tasks</a>
+    <a href="#grading">Grading System</a>
+    <a href="#rewards">Reward Function</a>
+    <a href="#penalties">Penalties</a>
+    <a href="#episode-bonuses">Episode Bonuses</a>
+
+    <div class="section-title">Problem Data</div>
+    <a href="#categories">Issue Categories</a>
+    <a href="#fix-categories">Fix Categories</a>
+    <a href="#red-herrings">Red Herrings</a>
+
+    <div class="section-title">Deployment</div>
+    <a href="#docker">Docker</a>
+    <a href="#inference">Inference Script</a>
+    <a href="#hf-space">HF Space</a>
+  </aside>
+
+  <main class="content">
+    <h1>Documentation</h1>
+    <p>Complete reference for the UX Insight Analyst reinforcement learning environment.</p>
+
+    <!-- OVERVIEW -->
+    <h2 id="overview">Overview</h2>
+    <p>
+      The UX Insight Analyst environment simulates the work of a UX analyst reviewing e-commerce
+      behavioral analytics data. The agent receives synthetic but realistic analytics from the
+      <strong class="text-white">StyleMart</strong> platform and must produce structured, actionable
+      UI/UX findings.
+    </p>
+    <p>
+      Built on the <a href="https://github.com/meta-pytorch/openenv">OpenEnv</a> framework.
+      Implements the standard three-method interface: <code>reset()</code>, <code>step(action)</code>,
+      and <code>state</code>.
+    </p>
+
+    <!-- QUICKSTART -->
+    <h2 id="quickstart">Quick Start</h2>
+    <h4>Python Client</h4>
+<pre><code>from client import UXInsightEnv
+from models import UXAction
+
+env = UXInsightEnv(base_url="https://sushere-ux-insight-env.hf.space")
+await env.connect()
+
+result = await env.reset(task_id="easy", seed=101)
+obs = result.observation
+
+action = UXAction(
+    finding_type="issue",
+    affected_element="Flash Sale banner image",
+    issue_category="dead_click",
+    severity="high",
+    recommendation="Make the Flash Sale banner image clickable...",
+    fix_category="fix_broken_link",
+    impact_estimate="Expected 20-30% reduction in dead clicks.",
+    confidence=0.9,
+)
+
+result = await env.step(action)
+print(f"Reward: {result.reward}, Done: {result.done}")</code></pre>
+
+    <h4>cURL</h4>
+<pre><code># Reset
+curl -X POST https://sushere-ux-insight-env.hf.space/reset \
+  -H "Content-Type: application/json" \
+  -d '{"seed": 101, "episode_id": "easy"}'
+
+# Step
+curl -X POST https://sushere-ux-insight-env.hf.space/step \
+  -H "Content-Type: application/json" \
+  -d '{"action": {"finding_type": "issue", ...}}'</code></pre>
+
+    <!-- API REFERENCE -->
+    <h2 id="api-health">GET /health</h2>
+    <p>Returns server status. No parameters.</p>
+<pre><code>{"status": "healthy"}</code></pre>
+
+    <h2 id="api-reset">POST /reset</h2>
+    <p>Start a new episode. Returns the initial observation.</p>
+    <table>
+      <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>seed</code></td><td>int</td><td>No</td><td>Random seed for deterministic generation</td></tr>
+        <tr><td><code>episode_id</code></td><td>str</td><td>No</td><td>Task selector: "easy", "medium", or "hard"</td></tr>
+        <tr><td><code>task_id</code></td><td>str</td><td>No</td><td>Alias for episode_id</td></tr>
+      </tbody>
+    </table>
+    <p>Response: <code>{"observation": UXObservation, "reward": null, "done": false}</code></p>
+
+    <h2 id="api-step">POST /step</h2>
+    <p>Submit an action for the current page. Returns observation with reward and done flag.</p>
+    <table>
+      <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>action</code></td><td>UXAction</td><td>Yes</td><td>The structured finding (see UXAction schema)</td></tr>
+      </tbody>
+    </table>
+    <p>Response: <code>{"observation": UXObservation, "reward": float, "done": bool}</code></p>
+
+    <h2 id="api-state">GET /state</h2>
+    <p>Returns internal environment state. Hidden from agent during evaluation; useful for debugging.</p>
+    <p>Response: <code>UXState</code> object.</p>
+
+    <h2 id="api-web">GET /web</h2>
+    <p>OpenEnv Playground web interface. Interactive form for submitting actions and viewing results.</p>
+
+    <!-- SCHEMAS -->
+    <h2 id="schema-action">UXAction Schema</h2>
+    <p>The agent's structured finding for the current page. All fields are required.</p>
+    <table>
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>finding_type</code></td><td><code>"issue" | "no_issue" | "ambiguous"</code></td><td>Whether the page contains a real UX issue, normal behavior, or unclear signal</td></tr>
+        <tr><td><code>affected_element</code></td><td>str</td><td>Specific UI element (e.g. "Add to Cart button"). "N/A" for no_issue</td></tr>
+        <tr><td><code>issue_category</code></td><td>str</td><td>Problem type. See <a href="#categories">Issue Categories</a></td></tr>
+        <tr><td><code>severity</code></td><td><code>"critical" | "high" | "medium" | "low" | "none"</code></td><td>Severity. Use "none" for no_issue</td></tr>
+        <tr><td><code>recommendation</code></td><td>str</td><td>Specific, actionable recommendation. Min 20 words. Must name the element</td></tr>
+        <tr><td><code>fix_category</code></td><td>str</td><td>Fix type. See <a href="#fix-categories">Fix Categories</a></td></tr>
+        <tr><td><code>impact_estimate</code></td><td>str</td><td>Expected metric impact (e.g. "15-25% reduction in abandonment"). "N/A" for no_issue</td></tr>
+        <tr><td><code>confidence</code></td><td>float [0.0, 1.0]</td><td>Agent confidence in this finding</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="schema-observation">UXObservation Schema</h2>
+    <p>What the agent sees at each step. Inherits <code>done</code> and <code>reward</code> from OpenEnv base.</p>
+    <table>
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>task_id</code></td><td>str</td><td>"easy", "medium", or "hard"</td></tr>
+        <tr><td><code>task_description</code></td><td>str</td><td>Natural-language task instructions</td></tr>
+        <tr><td><code>current_step</code></td><td>int</td><td>Current step (1-indexed)</td></tr>
+        <tr><td><code>total_steps</code></td><td>int</td><td>Total steps in episode</td></tr>
+        <tr><td><code>pages_to_analyze</code></td><td>List[str]</td><td>Page names for the episode</td></tr>
+        <tr><td><code>current_page_data</code></td><td>PageAnalyticsData</td><td>Full analytics for this page</td></tr>
+        <tr><td><code>findings_so_far</code></td><td>List[FindingEntry]</td><td>Prior submissions and rewards</td></tr>
+        <tr><td><code>cumulative_score</code></td><td>float</td><td>Running normalized score [0.0, 1.0]</td></tr>
+        <tr><td><code>grader_feedback</code></td><td>str</td><td>Feedback on the previous action</td></tr>
+        <tr><td><code>task_context</code></td><td>Dict</td><td>App metadata (name, date range, device split)</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="schema-state">UXState Schema</h2>
+    <p>Internal state. Hidden from agent; used for grading and debugging.</p>
+    <table>
+      <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>current_step</code></td><td>int</td><td>Current step index</td></tr>
+        <tr><td><code>task_id</code></td><td>str</td><td>Task difficulty</td></tr>
+        <tr><td><code>task_seed</code></td><td>int</td><td>Seed for reproducibility</td></tr>
+        <tr><td><code>embedded_problems</code></td><td>List[str]</td><td>Ground-truth problem IDs</td></tr>
+        <tr><td><code>pages_sequence</code></td><td>List[str]</td><td>Ordered page names</td></tr>
+        <tr><td><code>findings_submitted</code></td><td>List[FindingEntry]</td><td>All agent findings</td></tr>
+        <tr><td><code>episode_rewards</code></td><td>List[float]</td><td>Reward per step</td></tr>
+        <tr><td><code>total_reward_so_far</code></td><td>float</td><td>Sum of rewards</td></tr>
+        <tr><td><code>is_done</code></td><td>bool</td><td>Episode complete flag</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="schema-page">PageAnalyticsData Schema</h2>
+    <p>Analytics payload for one page. Nested inside UXObservation.</p>
+    <table>
+      <thead><tr><th>Field</th><th>Type</th></tr></thead>
+      <tbody>
+        <tr><td><code>page_name</code></td><td>str</td></tr>
+        <tr><td><code>page_url_pattern</code></td><td>str</td></tr>
+        <tr><td><code>total_sessions</code></td><td>int</td></tr>
+        <tr><td><code>avg_session_duration_seconds</code></td><td>float</td></tr>
+        <tr><td><code>bounce_rate</code></td><td>float</td></tr>
+        <tr><td><code>scroll_depth_p50</code>, <code>scroll_depth_p80</code></td><td>float</td></tr>
+        <tr><td><code>mobile_sessions_pct</code></td><td>float</td></tr>
+        <tr><td><code>mobile_bounce_rate</code>, <code>desktop_bounce_rate</code></td><td>float</td></tr>
+        <tr><td><code>heatmap_zones</code></td><td>List[HeatmapZone]</td></tr>
+        <tr><td><code>behavioral_signals</code></td><td>List[BehavioralSignal]</td></tr>
+        <tr><td><code>funnel_steps</code></td><td>Optional[List[FunnelStep]]</td></tr>
+        <tr><td><code>session_recording_summary</code></td><td>str</td></tr>
+      </tbody>
+    </table>
+
+    <!-- TASKS -->
+    <h2 id="tasks">Tasks</h2>
+    <h3>Easy (1 step)</h3>
+    <p>
+      One page with a single clear, high-signal problem (rage click or dead click).
+      The agent must identify the issue, categorize it, assess severity, and recommend a fix.
+      Basic LLMs should solve this reliably.
+    </p>
+    <h3>Medium (3 steps)</h3>
+    <p>
+      Three pages with different severity levels. The agent must analyze each page
+      independently and demonstrate correct severity ranking across the episode.
+      Requires multi-step reasoning and prioritization.
+    </p>
+    <h3>Hard (6 steps)</h3>
+    <p>
+      Six pages including real issues, red herrings (normal behaviors that look anomalous),
+      and clean pages. The agent must resist false positives, handle conflicting signals,
+      and provide impact-estimated recommendations. Requires careful analytical reasoning.
+    </p>
+
+    <!-- GRADING -->
+    <h2 id="grading">Grading System</h2>
+    <p>Each step is graded against embedded ground truth. The grade is a float in [0.0, 1.0].</p>
+
+    <h3>Case 1: Page has real problem(s)</h3>
+    <p>The grader finds the best-matching ground-truth problem and scores across five dimensions:</p>
+    <table>
+      <thead><tr><th>Dimension</th><th>Weight</th><th>Method</th></tr></thead>
+      <tbody>
+        <tr><td>Element identification</td><td>25%</td><td>Keyword overlap (Jaccard) between agent element and ground truth</td></tr>
+        <tr><td>Issue category</td><td>20%</td><td>Exact match = 1.0, related category = 0.5, else 0.0</td></tr>
+        <tr><td>Severity</td><td>15%</td><td>Exact = 1.0, off-by-one = 0.5, else 0.0</td></tr>
+        <tr><td>Recommendation</td><td>25%</td><td>Keyword coverage against expected keywords + element mention + length check</td></tr>
+        <tr><td>Fix category</td><td>15%</td><td>Exact match = full, compatible pair = half</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Case 2: Page has no real problems (clean or red herring only)</h3>
+    <table>
+      <thead><tr><th>Agent Response</th><th>Score</th></tr></thead>
+      <tbody>
+        <tr><td><code>no_issue</code> + <code>normal_behavior</code> + <code>severity: none</code></td><td>Up to 1.0</td></tr>
+        <tr><td><code>ambiguous</code></td><td>0.20 (partial credit for uncertainty)</td></tr>
+        <tr><td><code>issue</code> (false positive)</td><td>-0.10 penalty</td></tr>
+      </tbody>
+    </table>
+
+    <!-- REWARDS -->
+    <h2 id="rewards">Reward Function</h2>
+    <p>
+      The step reward wraps the grade with additional adjustments.
+      Base reward equals the step grade. Penalties are subtracted. Final reward is clamped to [-0.5, 1.0].
+    </p>
+
+    <h2 id="penalties">Penalties</h2>
+    <table>
+      <thead><tr><th>Condition</th><th>Penalty</th></tr></thead>
+      <tbody>
+        <tr><td>Duplicate finding (same element + category as prior step)</td><td>-0.40</td></tr>
+        <tr><td>Inconsistent: finding_type="issue" with severity="none"</td><td>-0.20</td></tr>
+        <tr><td>Overconfident wrong: grade &lt; 0.3 and confidence &gt; 0.8</td><td>-0.10</td></tr>
+        <tr><td>Trivial recommendation: under 10 characters</td><td>-0.15</td></tr>
+        <tr><td>Invalid issue_category or fix_category</td><td>-0.20</td></tr>
+        <tr><td>no_issue finding with severity not "none"</td><td>Action rejected</td></tr>
+        <tr><td>issue finding with fix_category "no_fix_needed"</td><td>Action rejected</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="episode-bonuses">Episode Bonuses</h2>
+    <p>Applied after the final step. Range: [-0.10, +0.25].</p>
+    <table>
+      <thead><tr><th>Bonus</th><th>Applies To</th><th>Range</th></tr></thead>
+      <tbody>
+        <tr><td>Priority ordering (severity ranking across findings)</td><td>medium, hard</td><td>0.00 to +0.10</td></tr>
+        <tr><td>Red herring handling (correct no_issue on trap pages)</td><td>hard only</td><td>0.00 to +0.10</td></tr>
+        <tr><td>Impact estimate quality (specificity of metric predictions)</td><td>hard only</td><td>0.00 to +0.05</td></tr>
+        <tr><td>False positive penalty</td><td>all</td><td>-0.05 per FP</td></tr>
+      </tbody>
+    </table>
+
+    <!-- CATEGORIES -->
+    <h2 id="categories">Issue Categories</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>rage_click</code></td><td>Users clicking repeatedly on an unresponsive element</td></tr>
+        <tr><td><code>dead_click</code></td><td>Users clicking a non-interactive element that looks clickable</td></tr>
+        <tr><td><code>funnel_dropoff</code></td><td>Abnormal abandonment rate at a funnel step</td></tr>
+        <tr><td><code>scroll_dropoff</code></td><td>Users not scrolling far enough to see key content/CTA</td></tr>
+        <tr><td><code>mobile_layout_break</code></td><td>Layout or interaction broken on mobile viewports</td></tr>
+        <tr><td><code>quickback</code></td><td>Users immediately returning after landing on a page</td></tr>
+        <tr><td><code>form_abandonment</code></td><td>Users starting but not completing a form</td></tr>
+        <tr><td><code>cta_invisible</code></td><td>CTA has very low click rate due to poor visibility/contrast</td></tr>
+        <tr><td><code>search_no_results</code></td><td>High rate of searches returning zero results</td></tr>
+        <tr><td><code>high_bounce</code></td><td>Abnormally high bounce rate indicating content/performance issues</td></tr>
+        <tr><td><code>normal_behavior</code></td><td>No issue -- metrics are within expected ranges</td></tr>
+        <tr><td><code>unclear</code></td><td>Ambiguous signal requiring further investigation</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="fix-categories">Fix Categories</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>redesign_element</code></td><td>Redesign the element's visual or interaction model</td></tr>
+        <tr><td><code>reposition_element</code></td><td>Move the element to a better location (above fold, etc.)</td></tr>
+        <tr><td><code>fix_broken_link</code></td><td>Make a non-interactive element clickable/linked</td></tr>
+        <tr><td><code>improve_copy</code></td><td>Improve labels, error messages, or instructional text</td></tr>
+        <tr><td><code>add_feedback</code></td><td>Add loading state, confirmation, or error feedback</td></tr>
+        <tr><td><code>reduce_steps</code></td><td>Simplify a multi-step flow</td></tr>
+        <tr><td><code>increase_contrast</code></td><td>Increase visual contrast to meet WCAG standards</td></tr>
+        <tr><td><code>add_loading_state</code></td><td>Add visual feedback during async operations</td></tr>
+        <tr><td><code>fix_mobile_layout</code></td><td>Fix mobile-specific layout or touch-target issues</td></tr>
+        <tr><td><code>no_fix_needed</code></td><td>No fix required (for no_issue findings)</td></tr>
+        <tr><td><code>investigate_further</code></td><td>Needs more data before recommending a fix</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="red-herrings">Red Herrings</h2>
+    <p>
+      The hard task includes red-herring pages: data that looks anomalous but is actually normal.
+      The agent must correctly identify these as <code>no_issue</code>.
+    </p>
+    <table>
+      <thead><tr><th>Example</th><th>Why It Is Normal</th></tr></thead>
+      <tbody>
+        <tr><td>89% exit rate on order confirmation page</td><td>Purchase is complete; users naturally leave</td></tr>
+        <tr><td>76% "bounce" rate on login page</td><td>Successful logins redirect away (analytics records as bounce)</td></tr>
+        <tr><td>Deep scroll + 3min on product detail page</td><td>Users are reading reviews thoroughly -- engagement, not friction</td></tr>
+        <tr><td>15% quickback from wishlist</td><td>Within normal range; users briefly check and navigate to a product</td></tr>
+      </tbody>
+    </table>
+
+    <!-- DEPLOYMENT -->
+    <h2 id="docker">Docker</h2>
+<pre><code># Build
+docker build -t ux-insight-env:latest -f server/Dockerfile .
+
+# Run
+docker run --rm -p 7860:7860 ux-insight-env:latest
+
+# Verify
+curl http://localhost:7860/health</code></pre>
+    <p>Base image: <code>python:3.11-slim</code>. Single worker. Port 7860. Fits within 2 vCPU / 8 GB RAM.</p>
+
+    <h2 id="inference">Inference Script</h2>
+    <p>The baseline script runs all tasks against the HF inference API.</p>
+<pre><code># Single model (default)
+export HF_TOKEN="hf_..."
+export MODEL_NAME="meta-llama/Llama-3.3-70B-Instruct"
+python inference.py
+
+# All baseline models
+export RUN_ALL_BASELINES=true
+python inference.py</code></pre>
+    <p>Environment variables:</p>
+    <table>
+      <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>API_BASE_URL</code></td><td>https://router.huggingface.co/v1/</td><td>OpenAI-compatible endpoint</td></tr>
+        <tr><td><code>MODEL_NAME</code></td><td>meta-llama/Llama-3.3-70B-Instruct</td><td>Model to evaluate</td></tr>
+        <tr><td><code>HF_TOKEN</code></td><td>(required)</td><td>HuggingFace API token</td></tr>
+        <tr><td><code>OPENENV_BASE_URL</code></td><td>https://sushere-ux-insight-env.hf.space</td><td>Environment endpoint</td></tr>
+        <tr><td><code>RUN_ALL_BASELINES</code></td><td>false</td><td>Set to "true" to run all 5 models</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="hf-space">HF Space</h2>
+    <p>Deployed at: <a href="https://sushere-ux-insight-env.hf.space">sushere-ux-insight-env.hf.space</a></p>
+    <table>
+      <thead><tr><th>Endpoint</th><th>URL</th></tr></thead>
+      <tbody>
+        <tr><td>Health</td><td><a href="https://sushere-ux-insight-env.hf.space/health">/health</a></td></tr>
+        <tr><td>Landing Page</td><td><a href="https://sushere-ux-insight-env.hf.space/">/</a></td></tr>
+        <tr><td>Playground</td><td><a href="https://sushere-ux-insight-env.hf.space/web">/web</a></td></tr>
+        <tr><td>Documentation</td><td><a href="https://sushere-ux-insight-env.hf.space/documentation">/documentation</a></td></tr>
+        <tr><td>API Schema</td><td><a href="https://sushere-ux-insight-env.hf.space/docs">/docs</a></td></tr>
+      </tbody>
+    </table>
+
+  </main>
+</div>
+
+</body>
+</html>

@@ -9,6 +9,8 @@ env/
 .tmp/
 .docker-config/
 
+.claude/
+
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -22,6 +24,8 @@ outputs/*
 !outputs/logs/.gitkeep
 !outputs/evals/
 !outputs/evals/.gitkeep
+
+uv.lock
 
 .vscode/
 .idea/

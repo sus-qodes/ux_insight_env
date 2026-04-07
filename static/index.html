@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UX Insight Analyst -- OpenEnv RL Environment</title>
+<style>
+:root {
+  --bg: #09090b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --border: #27272a;
+  --text: #a1a1aa;
+  --text-bright: #d4d4d8;
+  --heading: #fafafa;
+  --white: #fff;
+  --code-bg: #0c0c0e;
+  --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
+a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--text-bright); }
+code, pre { font-family: var(--mono); font-size: 13px; }
+pre { background: var(--code-bg); border: 1px solid var(--border); padding: 16px 20px; overflow-x: auto; line-height: 1.6; color: var(--text-bright); }
+h1, h2, h3, h4 { color: var(--heading); font-weight: 600; letter-spacing: -0.02em; }
+h1 { font-size: 28px; }
+h2 { font-size: 20px; text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+h3 { font-size: 16px; margin-bottom: 10px; }
+
+/* Layout */
+.container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+
+/* Nav */
+nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 0; }
+nav .container { display: flex; align-items: center; gap: 32px; }
+nav .logo { color: var(--white); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none; white-space: nowrap; }
+nav .links { display: flex; gap: 24px; flex-wrap: wrap; }
+nav .links a { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
+nav .links a:hover { color: var(--white); }
+
+/* Hero */
+.hero { padding: 72px 0 56px; border-bottom: 1px solid var(--border); }
+.hero h1 { font-size: 36px; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.2; }
+.hero .subtitle { font-size: 17px; color: var(--text-bright); max-width: 680px; margin-bottom: 28px; }
+.hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-block; padding: 10px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; border: 1px solid var(--border); transition: all 0.15s; }
+.btn-primary { background: var(--white); color: var(--bg); border-color: var(--white); }
+.btn-primary:hover { background: var(--text-bright); color: var(--bg); }
+.btn-secondary { background: transparent; color: var(--text-bright); }
+.btn-secondary:hover { background: var(--surface-2); color: var(--white); }
+
+/* Tag */
+.tag { display: inline-block; padding: 2px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--border); color: var(--text); margin-right: 6px; }
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+/* Card */
+.card { background: var(--surface); border: 1px solid var(--border); padding: 24px; }
+.card h3 { margin-bottom: 8px; }
+.card .num { font-size: 32px; font-weight: 700; color: var(--white); font-family: var(--mono); margin-bottom: 4px; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; color: var(--text); font-weight: 500; text-transform: uppercase; font-size: 11px; letter-spacing: 0.1em; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-bright); }
+tr:hover td { background: var(--surface); }
+td code { background: var(--code-bg); padding: 1px 5px; border: 1px solid var(--border); font-size: 12px; }
+
+/* Metric row */
+.metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.metric:last-child { border-bottom: none; }
+.metric .label { color: var(--text); }
+.metric .value { color: var(--white); font-family: var(--mono); font-weight: 600; }
+
+/* Steps */
+.step-list { counter-reset: steps; }
+.step-item { counter-increment: steps; padding: 20px 0 20px 48px; border-bottom: 1px solid var(--border); position: relative; }
+.step-item::before { content: counter(steps, decimal-leading-zero); position: absolute; left: 0; top: 20px; font-family: var(--mono); font-size: 14px; color: var(--text); font-weight: 600; }
+.step-item h3 { font-size: 15px; }
+.step-item p { color: var(--text); margin-top: 4px; }
+
+/* Footer */
+footer { padding: 40px 0; border-top: 1px solid var(--border); }
+footer p { font-size: 13px; color: var(--text); }
+footer a { color: var(--text-bright); }
+
+/* Utility */
+.mt-12 { margin-top: 12px; }
+.mt-20 { margin-top: 20px; }
+.mt-32 { margin-top: 32px; }
+.mb-8 { margin-bottom: 8px; }
+.text-muted { color: var(--text); font-size: 13px; }
+.text-bright { color: var(--text-bright); }
+.text-white { color: var(--white); }
+.mono { font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo">UX Insight Analyst</a>
+    <div class="links">
+      <a href="#overview">Overview</a>
+      <a href="#tasks">Tasks</a>
+      <a href="#demo">Demo</a>
+      <a href="#baselines">Baselines</a>
+      <a href="#findings">Findings</a>
+      <a href="/documentation">Docs</a>
+      <a href="/web">Playground</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div style="margin-bottom: 16px;">
+      <span class="tag">OpenEnv</span>
+      <span class="tag">Reinforcement Learning</span>
+      <span class="tag">UX Analytics</span>
+    </div>
+    <h1>UX Insight Analyst Environment</h1>
+    <p class="subtitle">
+      A reinforcement learning environment that benchmarks LLM agents on the real-world task of
+      interpreting e-commerce behavioral analytics data and producing actionable UX recommendations.
+    </p>
+    <div class="actions">
+      <a href="/web" class="btn btn-primary">Try Live Demo</a>
+      <a href="/documentation" class="btn btn-secondary">Read Documentation</a>
+      <a href="#baselines" class="btn btn-secondary">View Baselines</a>
+    </div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="container">
+    <h2>The Problem</h2>
+    <div class="grid-2">
+      <div>
+        <p>
+          Most agent benchmarks test code generation, search, support, or planning. None test
+          <strong class="text-white">behavioral analytics interpretation</strong> -- the daily work
+          of UX analysts and product teams at every e-commerce company.
+        </p>
+        <p class="mt-12">
+          This environment simulates the workflow of reviewing analytics from tools like
+          Microsoft Clarity, Hotjar, and Mixpanel: inspecting heatmaps, rage-click reports,
+          funnel drop-offs, device splits, and session recordings to separate real friction
+          from noise.
+        </p>
+      </div>
+      <div>
+        <p>
+          The agent receives synthetic but realistic <strong class="text-white">StyleMart</strong>
+          e-commerce analytics data. It must identify which pages have genuine UX problems,
+          classify them correctly, assess severity, and produce specific recommendations --
+          while resisting false positives from normal behavior patterns.
+        </p>
+        <p class="mt-12">
+          Dense, multi-component reward signals provide partial credit across five grading
+          dimensions, with penalties for duplicate findings, overconfident wrong answers,
+          and vague recommendations.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="container">
+    <h2>How It Works</h2>
+    <div class="step-list">
+      <div class="step-item">
+        <h3>Reset</h3>
+        <p>The environment generates deterministic analytics data for a sequence of pages using embedded ground-truth problems and red herrings.</p>
+      </div>
+      <div class="step-item">
+        <h3>Observe</h3>
+        <p>The agent receives page analytics: session counts, bounce rates, scroll depth, heatmap zones, behavioral signals, funnel data, and session recording summaries.</p>
+      </div>
+      <div class="step-item">
+        <h3>Act</h3>
+        <p>The agent submits a structured finding: finding type, affected element, issue category, severity, recommendation, fix category, impact estimate, and confidence.</p>
+      </div>
+      <div class="step-item">
+        <h3>Grade</h3>
+        <p>The environment grades the finding against embedded ground truth across five weighted dimensions. Dense partial credit -- not binary pass/fail.</p>
+      </div>
+      <div class="step-item">
+        <h3>Iterate</h3>
+        <p>The agent advances to the next page with grader feedback. After all pages, episode-level bonuses and penalties are applied.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TASKS -->
+<section id="tasks">
+  <div class="container">
+    <h2>Tasks</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Steps</th>
+          <th>Description</th>
+          <th>Challenge</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-white">Easy</td>
+          <td class="mono">1</td>
+          <td>One page with a single clear, high-signal UX issue such as a rage click or dead click.</td>
+          <td>Signal identification</td>
+        </tr>
+        <tr>
+          <td class="text-white">Medium</td>
+          <td class="mono">3</td>
+          <td>Three pages with different severity levels. Requires multi-step reasoning and prioritization.</td>
+          <td>Severity assessment and ranking</td>
+        </tr>
+        <tr>
+          <td class="text-white">Hard</td>
+          <td class="mono">6</td>
+          <td>Six-page funnel audit with real issues, red herrings, and clean pages mixed together.</td>
+          <td>False-positive resistance and cross-page reasoning</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="text-muted mt-12">
+      50 problem templates across 10 page types and 10 issue categories. Deterministic seeded generation ensures reproducibility.
+    </p>
+  </div>
+</section>
+
+<!-- REWARD SYSTEM -->
+<section>
+  <div class="container">
+    <h2>Reward System</h2>
+    <div class="grid-2">
+      <div>
+        <h3 class="mb-8">Per-Step Grading Weights</h3>
+        <div class="card">
+          <div class="metric"><span class="label">Element identification</span><span class="value">25%</span></div>
+          <div class="metric"><span class="label">Issue category</span><span class="value">20%</span></div>
+          <div class="metric"><span class="label">Severity accuracy</span><span class="value">15%</span></div>
+          <div class="metric"><span class="label">Recommendation quality</span><span class="value">25%</span></div>
+          <div class="metric"><span class="label">Fix category</span><span class="value">15%</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 class="mb-8">Anti-Exploit Penalties</h3>
+        <div class="card">
+          <div class="metric"><span class="label">Duplicate findings</span><span class="value">-0.40</span></div>
+          <div class="metric"><span class="label">Inconsistent action</span><span class="value">-0.20</span></div>
+          <div class="metric"><span class="label">Trivial recommendation</span><span class="value">-0.15</span></div>
+          <div class="metric"><span class="label">Overconfident + wrong</span><span class="value">-0.10</span></div>
+          <div class="metric"><span class="label">Invalid categories</span><span class="value">-0.20</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="text-muted mt-20">
+      Episode-level bonuses for priority ordering (medium/hard), red-herring handling (hard), and impact-estimate quality (hard). Range: [-0.10, +0.25].
+    </p>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <div class="container">
+    <h2>Live Demo</h2>
+    <p class="mb-8">
+      The OpenEnv Playground at <a href="/web">/web</a> provides a full interactive interface.
+      Reset episodes, submit structured findings, and view graded feedback in real time.
+    </p>
+    <h3 class="mt-20 mb-8">Example: Dead Click on Flash Sale Banner</h3>
+    <pre>{
+  "finding_type": "issue",
+  "affected_element": "Flash Sale banner image",
+  "issue_category": "dead_click",
+  "severity": "high",
+  "recommendation": "Make the Flash Sale banner image clickable and link it directly to the active flash sale page so users who tap the promotional banner reach the expected deals instead of waiting after a dead click.",
+  "fix_category": "fix_broken_link",
+  "impact_estimate": "Expected 20-30% reduction in dead clicks and measurable lift in flash sale click-through conversion.",
+  "confidence": 0.9
+}</pre>
+    <div class="mt-20">
+      <h3 class="mb-8">API Quick Start</h3>
+      <pre># Health check
+curl https://sushere-ux-insight-env.hf.space/health
+
+# Start an easy episode (deterministic)
+curl -X POST https://sushere-ux-insight-env.hf.space/reset \
+  -H "Content-Type: application/json" \
+  -d '{"seed": 101, "episode_id": "easy"}'</pre>
+    </div>
+    <div class="mt-20">
+      <a href="/web" class="btn btn-primary">Open Playground</a>
+    </div>
+  </div>
+</section>
+
+<!-- BASELINES -->
+<section id="baselines">
+  <div class="container">
+    <h2>Multi-Model Baselines</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Parameters</th>
+          <th>Easy</th>
+          <th>Medium</th>
+          <th>Hard</th>
+          <th>Average</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="text-white">Llama-3.3-70B-Instruct</td>
+          <td class="mono">70B</td>
+          <td class="mono">0.8867</td>
+          <td class="mono">0.5226</td>
+          <td class="mono">0.8448</td>
+          <td class="mono text-white">0.7514</td>
+        </tr>
+        <tr>
+          <td class="text-white">Llama-4-Maverick-17B-128E</td>
+          <td class="mono">17Bx128E</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+        </tr>
+        <tr>
+          <td class="text-white">Llama-4-Scout-17B-16E</td>
+          <td class="mono">17Bx16E</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+        </tr>
+        <tr>
+          <td class="text-white">Gemma-4-27B-IT</td>
+          <td class="mono">27B</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+        </tr>
+        <tr>
+          <td class="text-white">Qwen3.5-9B</td>
+          <td class="mono">9B</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+          <td class="mono">--</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="text-muted mt-12">
+      Deterministic seeds: easy=101, medium=202, hard=303. Success threshold: 0.5.
+      Inference endpoint: router.huggingface.co/v1/. Temperature: 0.3.
+    </p>
+    <div class="grid-3 mt-32">
+      <div class="card">
+        <div class="num">50</div>
+        <h3>Problem Templates</h3>
+        <p class="text-muted">45 real issues + 5 red herrings across 10 page types</p>
+      </div>
+      <div class="card">
+        <div class="num">10</div>
+        <h3>Issue Categories</h3>
+        <p class="text-muted">rage_click, dead_click, funnel_dropoff, mobile_layout_break, and more</p>
+      </div>
+      <div class="card">
+        <div class="num">5</div>
+        <h3>Grading Dimensions</h3>
+        <p class="text-muted">Element, category, severity, recommendation quality, fix category</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINDINGS -->
+<section id="findings">
+  <div class="container">
+    <h2>Key Findings</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Signal Identification Is Reliable</h3>
+        <p class="mt-12">
+          Large LLMs reliably identify high-signal UX issues like rage clicks and dead clicks.
+          The easy task (single obvious issue) is consistently solved with scores above 0.85.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Prioritization Is The Hard Part</h3>
+        <p class="mt-12">
+          The medium task (multi-page severity ranking) produces the lowest scores.
+          Models struggle to correctly rank critical vs. high vs. medium severity across pages.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Red-Herring Resistance Varies</h3>
+        <p class="mt-12">
+          The hard task includes red herrings (e.g., high exit rate on order confirmation page).
+          Larger models show better false-positive resistance, smaller models tend to over-flag.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Recommendation Quality Lags</h3>
+        <p class="mt-12">
+          Even when models correctly identify issues, recommendation specificity is often weak.
+          Generic advice ("improve the UX") scores poorly; element-specific changes score well.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA COVERAGE -->
+<section>
+  <div class="container">
+    <h2>Data Coverage</h2>
+    <div class="grid-2">
+      <div>
+        <h3 class="mb-8">Issue Categories</h3>
+        <table>
+          <tbody>
+            <tr><td><code>rage_click</code></td><td>7 templates</td></tr>
+            <tr><td><code>dead_click</code></td><td>7 templates</td></tr>
+            <tr><td><code>funnel_dropoff</code></td><td>5 templates</td></tr>
+            <tr><td><code>mobile_layout_break</code></td><td>6 templates</td></tr>
+            <tr><td><code>quickback</code></td><td>5 templates</td></tr>
+            <tr><td><code>scroll_dropoff</code></td><td>4 templates</td></tr>
+            <tr><td><code>form_abandonment</code></td><td>3 templates</td></tr>
+            <tr><td><code>cta_invisible</code></td><td>3 templates</td></tr>
+            <tr><td><code>search_no_results</code></td><td>2 templates</td></tr>
+            <tr><td><code>high_bounce</code></td><td>3 templates</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 class="mb-8">Pages (StyleMart Platform)</h3>
+        <table>
+          <tbody>
+            <tr><td><code>homepage</code></td><td>/</td></tr>
+            <tr><td><code>category_page</code></td><td>/category/{slug}</td></tr>
+            <tr><td><code>search_results</code></td><td>/search?q={query}</td></tr>
+            <tr><td><code>product_detail_page</code></td><td>/products/{id}</td></tr>
+            <tr><td><code>cart</code></td><td>/cart</td></tr>
+            <tr><td><code>checkout</code></td><td>/checkout</td></tr>
+            <tr><td><code>order_confirmation</code></td><td>/order/confirmation/{id}</td></tr>
+            <tr><td><code>account_login</code></td><td>/account/login</td></tr>
+            <tr><td><code>wishlist</code></td><td>/wishlist</td></tr>
+            <tr><td><code>flash_sale</code></td><td>/flash-sale</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+    <p>UX Insight Analyst Environment -- MIT License</p>
+    <p>
+      <a href="/web">Playground</a> &middot;
+      <a href="/documentation">Documentation</a> &middot;
+      <a href="/health">Health</a> &middot;
+      <a href="/docs">API Schema</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

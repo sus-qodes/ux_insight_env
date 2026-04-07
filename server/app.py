@@ -3,6 +3,10 @@
 # Uses mandatory dual-import pattern for both in-repo and Docker compatibility.
 # Uses OpenEnv's built-in web interface at /web — no custom Gradio UI.
 
+from pathlib import Path
+
+from fastapi.responses import HTMLResponse
+
 try:
     from ..models import UXAction, UXObservation
     from .environment import UXInsightEnvironment
@@ -18,6 +22,24 @@ app = create_app(
     UXObservation,
     env_name="ux-insight-env",
 )
+
+# ---------------------------------------------------------------------------
+# Custom pages — landing page and documentation
+# ---------------------------------------------------------------------------
+
+_STATIC = Path(__file__).resolve().parent.parent / "static"
+
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+async def landing_page():
+    """Serve the project landing page."""
+    return (_STATIC / "index.html").read_text(encoding="utf-8")
+
+
+@app.get("/documentation", response_class=HTMLResponse, include_in_schema=False)
+async def documentation_page():
+    """Serve the full documentation page."""
+    return (_STATIC / "docs.html").read_text(encoding="utf-8")
 
 
 def main():
