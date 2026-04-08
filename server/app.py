@@ -10,9 +10,17 @@ from fastapi.responses import HTMLResponse
 try:
     from ..models import UXAction, UXObservation
     from .environment import UXInsightEnvironment
+    from .custom_ui import custom_gradio_builder, ux_theme, css
 except ImportError:
     from models import UXAction, UXObservation
     from server.environment import UXInsightEnvironment
+    from server.custom_ui import custom_gradio_builder, ux_theme, css
+
+import openenv.core.env_server.gradio_ui as gui
+import openenv.core.env_server.web_interface as wi
+wi.build_gradio_app = custom_gradio_builder
+wi.OPENENV_GRADIO_THEME = ux_theme
+wi.OPENENV_GRADIO_CSS = css
 
 from openenv.core.env_server import create_app
 
@@ -22,6 +30,9 @@ app = create_app(
     UXObservation,
     env_name="ux-insight-env",
 )
+
+# Remove the default root redirect created by create_app so our custom landing page at "/" works
+app.router.routes = [r for r in app.router.routes if r.path != "/"]
 
 # ---------------------------------------------------------------------------
 # Custom pages — landing page and documentation

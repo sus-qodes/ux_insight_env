@@ -1,3 +1,15 @@
+---
+title: UX Insight Analyst Environment
+emoji: 🔍
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+app_port: 7860
+tags:
+  - openenv
+---
+
 # UX Insight Analyst Environment
 
 `ux-insight-env` is an OpenEnv reinforcement learning environment that simulates the work of a UX analyst reviewing e-commerce behavioral analytics data.
@@ -179,7 +191,7 @@ PowerShell:
 $env:API_BASE_URL = "https://router.huggingface.co/v1/"
 $env:MODEL_NAME = "meta-llama/Llama-3.3-70B-Instruct"
 $env:OPENENV_BASE_URL = "https://sushere-ux-insight-env.hf.space"
-$env:OPENENV_IMAGE = "ux-insight-env:latest"
+$env:LOCAL_IMAGE_NAME = "ux-insight-env:latest"
 py -3.12 inference.py
 ```
 
@@ -193,7 +205,7 @@ $env:HF_TOKEN = "hf_your_token_here"
 py -3.12 inference.py
 ```
 
-If `HF_TOKEN` is not set, `inference.py` will try to use your cached Hugging Face CLI login token. If `OPENENV_BASE_URL` is empty, the script falls back to launching `OPENENV_IMAGE` locally with OpenEnv's Docker client.
+If `HF_TOKEN` is not set, `inference.py` will try to use your cached Hugging Face CLI login token. If `OPENENV_BASE_URL` is empty, the script falls back to launching `LOCAL_IMAGE_NAME` locally with OpenEnv's Docker client.
 
 ## Baseline Scores
 
@@ -250,7 +262,7 @@ Run details:
 ux_insight_env/
   __init__.py
   client.py
-  inference.py
+  inference.py (copy to repo root for submission)
   models.py
   openenv.yaml
   pyproject.toml
@@ -266,6 +278,9 @@ ux_insight_env/
     problem_templates.py
     requirements.txt
     Dockerfile
+
+(At project root for submission)
+inference.py (MUST be here - required by hackathon spec)
 ```
 
 ## License

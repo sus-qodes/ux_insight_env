@@ -20,9 +20,9 @@ except Exception:
 # ---------------------------------------------------------------------------
 # Configuration (from environment variables - NEVER hardcode)
 # ---------------------------------------------------------------------------
-API_BASE_URL = os.environ.get("API_BASE_URL", "https://router.huggingface.co/v1/")
-MODEL_NAME   = os.environ.get("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
-HF_TOKEN     = os.environ.get("HF_TOKEN") or (get_token() if get_token else "") or ""
+API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1/")
+MODEL_NAME   = os.getenv("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
+HF_TOKEN     = os.getenv("HF_TOKEN")
 API_KEY      = HF_TOKEN  # HF token used as the API key
 
 # ---------------------------------------------------------------------------
@@ -39,8 +39,8 @@ BASELINE_MODELS: List[str] = [
 # ---------------------------------------------------------------------------
 # Evaluation settings
 # ---------------------------------------------------------------------------
-IMAGE_NAME          = os.environ.get("OPENENV_IMAGE", "ux-insight-env:latest")
-ENV_BASE_URL        = os.environ.get("OPENENV_BASE_URL", "https://sushere-ux-insight-env.hf.space")
+LOCAL_IMAGE_NAME    = os.getenv("LOCAL_IMAGE_NAME")
+ENV_BASE_URL        = os.getenv("OPENENV_BASE_URL", "https://sushere-ux-insight-env.hf.space")
 BENCHMARK           = "ux-insight-env"
 TEMPERATURE         = 0.3       # Low temp for analytical tasks
 MAX_TOKENS          = 800
@@ -250,7 +250,7 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
         from ux_insight_env.client import UXInsightEnv
         from ux_insight_env.models import UXAction
     except ModuleNotFoundError:
-        # Running as `python inference.py` from the submission root.
+        # When running from docker or as a standalone script from the repo root
         from client import UXInsightEnv
         from models import UXAction
 
@@ -270,7 +270,7 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
             env = UXInsightEnv(base_url=ENV_BASE_URL)
             await env.connect()
         else:
-            env = await UXInsightEnv.from_docker_image(IMAGE_NAME)
+            env = await UXInsightEnv.from_docker_image(LOCAL_IMAGE_NAME)
         result = await env.reset(task_id=task_name, episode_id=task_name, seed=TASK_SEEDS[task_name])
         obs = result.observation
 
