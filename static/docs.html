@@ -424,7 +424,7 @@ curl -X POST https://sushere-ux-insight-env.hf.space/step \
     <!-- DEPLOYMENT -->
     <h2 id="docker">Docker</h2>
 <pre><code># Build
-docker build -t ux-insight-env:latest -f server/Dockerfile .
+docker build -t ux-insight-env:latest .
 
 # Run
 docker run --rm -p 7860:7860 ux-insight-env:latest
@@ -434,13 +434,13 @@ curl http://localhost:7860/health</code></pre>
     <p>Base image: <code>python:3.11-slim</code>. Single worker. Port 7860. Fits within 2 vCPU / 8 GB RAM.</p>
 
     <h2 id="inference">Inference Script</h2>
-    <p>The baseline script runs all tasks against the HF inference API.</p>
+    <p>The baseline script runs all tasks against the HF inference API using the current working baseline set.</p>
 <pre><code># Single model (default)
 export HF_TOKEN="hf_..."
 export MODEL_NAME="meta-llama/Llama-3.3-70B-Instruct"
 python inference.py
 
-# All baseline models
+# Current working baseline set
 export RUN_ALL_BASELINES=true
 python inference.py</code></pre>
     <p>Environment variables:</p>
@@ -449,9 +449,9 @@ python inference.py</code></pre>
       <tbody>
         <tr><td><code>API_BASE_URL</code></td><td>https://router.huggingface.co/v1/</td><td>OpenAI-compatible endpoint</td></tr>
         <tr><td><code>MODEL_NAME</code></td><td>meta-llama/Llama-3.3-70B-Instruct</td><td>Model to evaluate</td></tr>
-        <tr><td><code>HF_TOKEN</code></td><td>(required)</td><td>HuggingFace API token</td></tr>
+        <tr><td><code>HF_TOKEN</code></td><td>(optional)</td><td>HuggingFace API token; if unset, the script falls back to your cached HF CLI login token</td></tr>
         <tr><td><code>OPENENV_BASE_URL</code></td><td>https://sushere-ux-insight-env.hf.space</td><td>Environment endpoint</td></tr>
-        <tr><td><code>RUN_ALL_BASELINES</code></td><td>false</td><td>Set to "true" to run all 5 models</td></tr>
+        <tr><td><code>RUN_ALL_BASELINES</code></td><td>false</td><td>Set to "true" to run the current working baseline set</td></tr>
       </tbody>
     </table>
 
