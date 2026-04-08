@@ -165,7 +165,7 @@ uvicorn server.app:app --host 0.0.0.0 --port 7860
 Build and run Docker:
 
 ```bash
-docker build -t ux-insight-env:latest -f server/Dockerfile .
+docker build -t ux-insight-env:latest .
 docker run --rm -p 7860:7860 ux-insight-env:latest
 ```
 
@@ -211,31 +211,21 @@ If `HF_TOKEN` is not set, `inference.py` will try to use your cached Hugging Fac
 
 | Task | Model | Params | Score | Steps | Success |
 |---|---|---:|---:|---:|---|
-| easy | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.8867 | 1 | True |
-| medium | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.5226 | 3 | True |
-| hard | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.8448 | 6 | True |
-| easy | meta-llama/Llama-4-Maverick-17B-128E-Instruct | 17Bx128E | -- | 1 | -- |
-| medium | meta-llama/Llama-4-Maverick-17B-128E-Instruct | 17Bx128E | -- | 3 | -- |
-| hard | meta-llama/Llama-4-Maverick-17B-128E-Instruct | 17Bx128E | -- | 6 | -- |
-| easy | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | -- | 1 | -- |
-| medium | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | -- | 3 | -- |
-| hard | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | -- | 6 | -- |
-| easy | google/gemma-4-31b-it | 31B | -- | 1 | -- |
-| medium | google/gemma-4-31b-it | 31B | -- | 3 | -- |
-| hard | google/gemma-4-31b-it | 31B | -- | 6 | -- |
-| easy | Qwen/Qwen3.5-9B | 9B | -- | 1 | -- |
-| medium | Qwen/Qwen3.5-9B | 9B | -- | 3 | -- |
-| hard | Qwen/Qwen3.5-9B | 9B | -- | 6 | -- |
+| easy | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.8450 | 1 | True |
+| medium | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.8134 | 3 | True |
+| hard | meta-llama/Llama-3.3-70B-Instruct | 70B | 0.7864 | 6 | True |
+| easy | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | 0.9250 | 1 | True |
+| medium | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | 0.6012 | 3 | True |
+| hard | meta-llama/Llama-4-Scout-17B-16E-Instruct | 17Bx16E | 0.8262 | 6 | True |
 
 Run details:
 
-- Date: 2026-04-07
+- Date: 2026-04-08
 - Inference endpoint: `https://router.huggingface.co/v1/`
 - Environment endpoint: `https://sushere-ux-insight-env.hf.space`
 - Deterministic seeds: easy `101`, medium `202`, hard `303`
 - Success threshold: `0.5`
-- Multi-model baselines: set `RUN_ALL_BASELINES=true` to evaluate all models
-- Note: the hard-task baseline scored high in this run because the model identified most issue pages and one red-herring page successfully.
+- Multi-model baselines: set `RUN_ALL_BASELINES=true` to evaluate the current working baseline set
 
 ## End-to-End Walkthrough
 
@@ -262,11 +252,12 @@ Run details:
 ux_insight_env/
   __init__.py
   client.py
-  inference.py (copy to repo root for submission)
+  inference.py
   models.py
   openenv.yaml
   pyproject.toml
   README.md
+  Dockerfile
   static/
     index.html
     docs.html
@@ -277,10 +268,6 @@ ux_insight_env/
     grader.py
     problem_templates.py
     requirements.txt
-    Dockerfile
-
-(At project root for submission)
-inference.py (MUST be here - required by hackathon spec)
 ```
 
 ## License

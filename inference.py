@@ -6,9 +6,10 @@ MUST run on 2 vCPUs / 8GB RAM.
 """
 
 import asyncio
+from datetime import datetime, timezone
 import json
 import os
-from typing import List
+from typing import Any, Dict, List
 
 from openai import OpenAI
 
@@ -23,17 +24,14 @@ except Exception:
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1/")
 MODEL_NAME   = os.getenv("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
 HF_TOKEN     = os.getenv("HF_TOKEN")
-API_KEY      = HF_TOKEN  # HF token used as the API key
+SCRIPT_DIR   = os.path.dirname(os.path.abspath(__file__))
 
 # ---------------------------------------------------------------------------
 # Multi-model baselines
 # ---------------------------------------------------------------------------
 BASELINE_MODELS: List[str] = [
     MODEL_NAME,
-    "google/gemma-4-31b-it",
     "meta-llama/Llama-4-Scout-17B-16E-Instruct",
-    "meta-llama/Llama-4-Maverick-17B-128E-Instruct",
-    "Qwen/Qwen3.5-9B",
 ]
 
 # ---------------------------------------------------------------------------
@@ -51,6 +49,7 @@ PER_STEP_TIMEOUT    = 30        # seconds - API timeout per LLM call
 TASK_TIMEOUT        = 300       # seconds - max per task
 TASK_SEEDS          = {"easy": 101, "medium": 202, "hard": 303}
 TASK_MAX_REWARD     = {"easy": 1.0, "medium": 3.0, "hard": 6.0}
+TASK_ORDER          = ["easy", "medium", "hard"]
 
 # ---------------------------------------------------------------------------
 # System prompt for the LLM agent
@@ -115,6 +114,27 @@ def log_end(success: bool, steps: int, score: float, rewards: List[float]):
 
 
 # ---------------------------------------------------------------------------
+# Auth helpers
+# ---------------------------------------------------------------------------
+
+class ModelInferenceError(RuntimeError):
+    """Raised when the model endpoint cannot produce a response."""
+
+
+def resolve_api_key() -> str:
+    """Use HF_TOKEN when present, otherwise fall back to the cached HF CLI token."""
+    if HF_TOKEN:
+        return HF_TOKEN
+    if get_token is not None:
+        cached_token = get_token()
+        if cached_token:
+            return cached_token
+    raise RuntimeError(
+        "No Hugging Face token available. Set HF_TOKEN or login with `hf auth login`."
+    )
+
+
+# ---------------------------------------------------------------------------
 # LLM call
 # ---------------------------------------------------------------------------
 
@@ -148,7 +168,10 @@ Respond ONLY with a valid JSON object for the UXAction schema."""
             stream=False,
             timeout=PER_STEP_TIMEOUT,
         )
-        text = (completion.choices[0].message.content or "{}").strip()
+        raw_content = completion.choices[0].message.content
+        text = (raw_content or "").strip()
+        if not text:
+            raise ModelInferenceError("Model returned an empty response.")
         # Strip markdown code fences if present
         if text.startswith("```"):
             lines = text.split("\n")
@@ -157,16 +180,7 @@ Respond ONLY with a valid JSON object for the UXAction schema."""
         return text
     except Exception as exc:
         print(f"[DEBUG] LLM call failed: {exc}", flush=True)
-        return json.dumps({
-            "finding_type": "ambiguous",
-            "affected_element": "N/A",
-            "issue_category": "unclear",
-            "severity": "none",
-            "recommendation": "Unable to analyze data at this time due to API error. Recommend manual review of the analytics data for this page.",
-            "fix_category": "investigate_further",
-            "impact_estimate": "N/A",
-            "confidence": 0.0,
-        })
+        raise ModelInferenceError(str(exc)) from exc
 
 
 # ---------------------------------------------------------------------------
@@ -244,8 +258,8 @@ def make_fallback_action_dict() -> dict:
 # Main evaluation loop
 # ---------------------------------------------------------------------------
 
-async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
-    """Run one task and return the final normalized score."""
+async def run_task(task_name: str, model_name: str = MODEL_NAME) -> Dict[str, Any]:
+    """Run one task and return task-level metrics."""
     try:
         from ux_insight_env.client import UXInsightEnv
         from ux_insight_env.models import UXAction
@@ -254,13 +268,14 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
         from client import UXInsightEnv
         from models import UXAction
 
-    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+    client = OpenAI(base_url=API_BASE_URL, api_key=resolve_api_key())
 
     history: List[str] = []
     rewards: List[float] = []
     steps_taken = 0
     score = 0.0
     success = False
+    task_error = None
 
     log_start(task=task_name, env=BENCHMARK, model=model_name)
 
@@ -280,7 +295,15 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
 
             # Format observation for LLM
             obs_text = format_observation_for_llm(obs)
-            action_json_str = get_agent_action(client, obs_text, history, model_name=model_name)
+            try:
+                action_json_str = get_agent_action(client, obs_text, history, model_name=model_name)
+            except ModelInferenceError as llm_err:
+                task_error = f"model_inference_failed: {llm_err}"
+                print(
+                    f"[DEBUG] Aborting task {task_name} for {model_name}: {task_error}",
+                    flush=True,
+                )
+                break
 
             # Parse and validate action
             try:
@@ -333,6 +356,7 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
 
     except Exception as e:
         print(f"[DEBUG] Task {task_name} failed with error: {e}", flush=True)
+        task_error = str(e)
     finally:
         if env is not None:
             try:
@@ -341,17 +365,26 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> float:
                 print(f"[DEBUG] env.close() error: {e}", flush=True)
         log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
 
-    return score
+    return {
+        "score": score,
+        "success": success,
+        "steps": steps_taken,
+        "rewards": rewards,
+        "error": task_error,
+    }
 
 
-async def run_single_model(model_name: str) -> dict:
-    """Run all tasks for a single model. Returns {task: score}."""
-    scores = {}
-    for task in ["easy", "medium", "hard"]:
+async def run_single_model(model_name: str) -> Dict[str, Dict[str, Any]]:
+    """Run all tasks for a single model."""
+    scores: Dict[str, Dict[str, Any]] = {}
+    for task in TASK_ORDER:
         print(f"[DEBUG] === {model_name} | task: {task} ===", flush=True)
-        score = await run_task(task, model_name=model_name)
-        scores[task] = score
-        print(f"[DEBUG] {model_name} | {task} score: {score:.4f}", flush=True)
+        task_result = await run_task(task, model_name=model_name)
+        scores[task] = task_result
+        print(
+            f"[DEBUG] {model_name} | {task} score: {task_result['score']:.4f}",
+            flush=True,
+        )
     return scores
 
 
@@ -360,7 +393,7 @@ async def main() -> None:
     run_all = os.environ.get("RUN_ALL_BASELINES", "").lower() in ("1", "true", "yes")
     models = BASELINE_MODELS if run_all else [MODEL_NAME]
 
-    all_results: dict = {}  # {model_name: {task: score}}
+    all_results: Dict[str, Dict[str, Dict[str, Any]]] = {}
     for model in models:
         print(f"\n[DEBUG] {'='*60}", flush=True)
         print(f"[DEBUG] RUNNING MODEL: {model}", flush=True)
@@ -371,26 +404,39 @@ async def main() -> None:
     print("\n[DEBUG] === MULTI-MODEL BASELINE RESULTS ===", flush=True)
     print(f"[DEBUG] {'Model':<55} {'Easy':>6} {'Medium':>8} {'Hard':>6} {'Avg':>6}", flush=True)
     print(f"[DEBUG] {'-'*55} {'-'*6} {'-'*8} {'-'*6} {'-'*6}", flush=True)
-    for model, scores in all_results.items():
-        avg = sum(scores.values()) / len(scores) if scores else 0.0
+    for model, task_results in all_results.items():
+        avg = (
+            sum(task["score"] for task in task_results.values()) / len(task_results)
+            if task_results
+            else 0.0
+        )
         print(
-            f"[DEBUG] {model:<55} {scores.get('easy', 0):.4f} {scores.get('medium', 0):.4f} "
-            f"{scores.get('hard', 0):.4f} {avg:.4f}",
+            f"[DEBUG] {model:<55} {task_results.get('easy', {}).get('score', 0.0):.4f} "
+            f"{task_results.get('medium', {}).get('score', 0.0):.4f} "
+            f"{task_results.get('hard', {}).get('score', 0.0):.4f} {avg:.4f}",
             flush=True,
         )
 
     # Save results to JSON
     output = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "benchmark": BENCHMARK,
         "endpoint": API_BASE_URL,
         "environment": ENV_BASE_URL,
         "seeds": TASK_SEEDS,
         "results": {
-            model: {"scores": scores, "avg": sum(scores.values()) / len(scores)}
-            for model, scores in all_results.items()
+            model: {
+                "tasks": task_results,
+                "avg": (
+                    sum(task["score"] for task in task_results.values()) / len(task_results)
+                    if task_results
+                    else 0.0
+                ),
+            }
+            for model, task_results in all_results.items()
         },
     }
-    results_path = os.path.join("outputs", "evals", "baseline_results.json")
+    results_path = os.path.join(SCRIPT_DIR, "outputs", "evals", "baseline_results.json")
     os.makedirs(os.path.dirname(results_path), exist_ok=True)
     with open(results_path, "w") as f:
         json.dump(output, f, indent=2)
