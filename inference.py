@@ -83,34 +83,42 @@ RESPOND ONLY WITH A VALID JSON OBJECT matching the UXAction schema. No preamble,
 # Logging functions (STRICT FORMAT - DO NOT MODIFY FIELD NAMES)
 # ---------------------------------------------------------------------------
 
+def _format_log_value(value: Any) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if value is None:
+        return "null"
+    if isinstance(value, (int, float)):
+        return str(value)
+    return json.dumps(value, ensure_ascii=False)
+
+
 def log_start(task: str, env: str, model: str):
-    print(json.dumps({
-        "type": "START",
-        "task": task,
-        "env": env,
-        "model": model
-    }), flush=True)
+    print(
+        f"[START] task={task} env={env} model={model}",
+        flush=True,
+    )
 
 
 def log_step(step: int, action: str, reward: float, done: bool, error=None):
-    print(json.dumps({
-        "type": "STEP",
-        "step": step,
-        "action": action,
-        "reward": reward,
-        "done": done,
-        "error": error
-    }), flush=True)
+    print(
+        f"[STEP] step={_format_log_value(step)} "
+        f"action={_format_log_value(action)} "
+        f"reward={_format_log_value(reward)} "
+        f"done={_format_log_value(done)} "
+        f"error={_format_log_value(error)}",
+        flush=True,
+    )
 
 
 def log_end(success: bool, steps: int, score: float, rewards: List[float]):
-    print(json.dumps({
-        "type": "END",
-        "success": success,
-        "steps": steps,
-        "score": score,
-        "rewards": rewards
-    }), flush=True)
+    print(
+        f"[END] success={_format_log_value(success)} "
+        f"steps={_format_log_value(steps)} "
+        f"score={_format_log_value(score)} "
+        f"rewards={_format_log_value(rewards)}",
+        flush=True,
+    )
 
 
 # ---------------------------------------------------------------------------
