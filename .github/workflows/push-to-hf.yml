@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'server/**'
+      - 'static/**'
       - 'models.py'
       - 'Dockerfile'
       - 'README.md'
