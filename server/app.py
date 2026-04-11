@@ -15,6 +15,12 @@ except ImportError:
 
 from openenv.core.env_server import create_app
 
+# Import the recommendation generator
+try:
+    from .environment import _generate_recommendation, _generate_impact_estimate
+except ImportError:
+    from server.environment import _generate_recommendation, _generate_impact_estimate
+
 # Create base app
 app = create_app(
     UXInsightEnvironment,    # Pass the CLASS, not an instance
@@ -97,9 +103,9 @@ async def get_ground_truth():
                 "affected_element": p.get("affected_element", "Unknown Element"),
                 "issue_category": p.get("problem_type", "normal_behavior"),
                 "severity": p.get("severity", "medium"),
-                "recommendation": p.get("expected_fix_description", "Improve user experience"),
+                "recommendation": _generate_recommendation(p),
                 "fix_category": p.get("expected_fix_category", "redesign_element"),
-                "impact_estimate": p.get("expected_impact_estimate", "Expected positive impact"),
+                "impact_estimate": _generate_impact_estimate(p),
                 "confidence": 0.95
             }
         else:
