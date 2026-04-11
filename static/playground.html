@@ -15,8 +15,7 @@
   --text-bright: #d4d4d8;
   --heading: #fafafa;
   --white: #fff;
-  --code-bg: #0c0c0e;
-  --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
   --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
   --success: #10b981;
   --warning: #f59e0b;
@@ -25,8 +24,8 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
-a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); }
+a { color: var(--white); text-decoration: underline; }
 
 /* Nav */
 nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 0; }
@@ -38,20 +37,18 @@ nav .links a { color: var(--text); font-size: 13px; text-transform: uppercase; l
 .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
 main { padding: 40px 0; }
 
-/* Header */
 .header { margin-bottom: 32px; }
 .header h1 { font-size: 32px; margin-bottom: 8px; color: var(--white); }
 .header p { color: var(--text); font-size: 14px; }
 
-/* Card */
 .card {
   background: linear-gradient(135deg, rgb(17, 17, 19) 0%, rgb(15, 15, 18) 100%);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
+  margin-bottom: 24px;
 }
 
-/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -77,7 +74,7 @@ main { padding: 40px 0; }
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -96,17 +93,61 @@ main { padding: 40px 0; }
 
 .btn-block { width: 100%; }
 
-/* Difficulty buttons */
+/* Workflow */
+.workflow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.workflow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.workflow-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.workflow-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin-bottom: 6px;
+  text-align: center;
+  min-width: 90px;
+}
+
+.workflow-arrow {
+  color: var(--border);
+  font-size: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+.workflow-step.disabled .btn { opacity: 0.4; cursor: not-allowed; }
+.workflow-step.active .btn:not(:disabled) { background: var(--white); color: var(--bg); border-color: var(--white); }
+
+/* Difficulty selector */
 .difficulty-group {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .difficulty-group .btn {
   padding: 10px;
   font-size: 12px;
+  width: 100%;
 }
 
 .difficulty-group .btn.active {
@@ -136,12 +177,8 @@ main { padding: 40px 0; }
 .form-group textarea { resize: vertical; min-height: 70px; }
 
 /* Grid */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 24px; }
-
-@media (max-width: 1024px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-}
+.grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+@media (max-width: 1024px) {  .grid-2 { grid-template-columns: 1fr; } }
 
 /* Metrics */
 .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
@@ -154,59 +191,25 @@ main { padding: 40px 0; }
 .metric .label { font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; }
 .metric .value { font-size: 20px; font-weight: 700; color: var(--text-bright); font-family: var(--mono); }
 
-/* Step history */
-.step-history { max-height: 200px; overflow-y: auto; }
-.step-item {
-  padding: 10px;
+/* Feedback */
+.feedback-area {
+  min-height: 60px;
+  color: var(--text-bright);
+  line-height: 1.6;
+  padding: 12px;
   background: var(--surface-2);
   border-radius: 6px;
-  margin-bottom: 8px;
-  font-size: 12px;
   border-left: 3px solid var(--border);
-  display: flex;
-  justify-content: space-between;
 }
-.step-item.success { border-left-color: var(--success); }
-.step-item.warning { border-left-color: var(--warning); }
-.step-item.error { border-left-color: var(--error); }
 
-/* Progress */
-.progress-bar {
-  width: 100%;
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-.progress-fill { height: 100%; background: var(--white); border-radius: 2px; transition: width 0.3s; }
-
-/* Status badge */
-.status-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.status-badge.success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-.status-badge.warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-.status-badge.error { background: rgba(239, 68, 68, 0.1); color: var(--error); }
-
-/* Feedback */
-.feedback { color: var(--text-bright); line-height: 1.6; }
+.feedback-area.success { border-left-color: var(--success); }
+.feedback-area.warning { border-left-color: var(--warning); }
+.feedback-area.error { border-left-color: var(--error); }
 
 /* Chart */
 .chart-container { position: relative; height: 150px; margin-bottom: 16px; }
 
 footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text); }
-
-/* Scrollbar */
-.step-history::-webkit-scrollbar { width: 6px; }
-.step-history::-webkit-scrollbar-track { background: var(--surface-2); border-radius: 3px; }
-.step-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -216,7 +219,6 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: cente
     <a href="/" class="logo">UX INSIGHT ANALYST</a>
     <div class="links">
       <a href="/#overview">Overview</a>
-      <a href="/#tasks">Tasks</a>
       <a href="/documentation">Docs</a>
       <a href="/web" style="color: var(--white); font-weight: 600;">Playground</a>
     </div>
@@ -227,27 +229,53 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: cente
   <div class="container">
     <div class="header">
       <h1>Interactive Playground</h1>
-      <p>Select difficulty, start an episode, analyze pages, and submit findings.</p>
+      <p>Follow the workflow below step-by-step. Each button activates when you complete the previous step.</p>
     </div>
 
-    <!-- SETUP SECTION -->
-    <div class="card" style="margin-bottom: 32px;">
-      <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Start New Analysis</h3>
-
-      <div class="form-group">
-        <label>Select Difficulty</label>
-        <div class="difficulty-group">
-          <button class="btn active" id="btn-easy" onclick="setDifficulty('easy')">Easy</button>
-          <button class="btn" id="btn-medium" onclick="setDifficulty('medium')">Medium</button>
-          <button class="btn" id="btn-hard" onclick="setDifficulty('hard')">Hard</button>
+    <!-- SEQUENTIAL WORKFLOW -->
+    <div class="workflow">
+      <!-- Step 1: Select Difficulty -->
+      <div class="workflow-step">
+        <div class="workflow-label">1. Difficulty</div>
+        <div class="workflow-button">
+          <div class="difficulty-group" style="margin-bottom: 0;">
+            <button class="btn active" id="btn-easy" onclick="setDifficulty('easy')">Easy</button>
+            <button class="btn" id="btn-medium" onclick="setDifficulty('medium')">Medium</button>
+            <button class="btn" id="btn-hard" onclick="setDifficulty('hard')">Hard</button>
+          </div>
         </div>
       </div>
 
-      <button class="btn btn-primary btn-block" onclick="startEpisode()">Start Analyzing</button>
+      <!-- Arrow -->
+      <div class="workflow-arrow">→</div>
+
+      <!-- Step 2: Start -->
+      <div class="workflow-step" id="step-start">
+        <div class="workflow-label">2. Start Episode</div>
+        <button class="btn btn-primary" onclick="startEpisode()">Start</button>
+      </div>
+
+      <!-- Arrow -->
+      <div class="workflow-arrow">→</div>
+
+      <!-- Step 3: Auto-Fill -->
+      <div class="workflow-step disabled" id="step-autofill">
+        <div class="workflow-label">3. Or Auto-Fill</div>
+        <button class="btn" id="autoFillBtn" onclick="autoFillForm()" disabled>Auto-Fill</button>
+      </div>
+
+      <!-- Arrow -->
+      <div class="workflow-arrow">→</div>
+
+      <!-- Step 4: Submit -->
+      <div class="workflow-step disabled" id="step-submit">
+        <div class="workflow-label">4. Submit</div>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitFinding()" disabled>Submit</button>
+      </div>
     </div>
 
-    <!-- MAIN WORK AREA -->
-    <div class="grid-3">
+    <!-- MAIN CONTENT -->
+    <div class="grid-2">
       <!-- LEFT: Form -->
       <div class="card">
         <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Your Finding</h3>
@@ -262,7 +290,7 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: cente
 
         <div class="form-group">
           <label>Affected Element</label>
-          <input id="affected_element" type="text" placeholder="e.g., Banner" value="N/A">
+          <input id="affected_element" type="text" placeholder="e.g., Banner">
         </div>
 
         <div class="form-group">
@@ -319,64 +347,35 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: cente
           <label>Confidence (0-1)</label>
           <input id="confidence" type="number" min="0" max="1" step="0.05" value="0.5">
         </div>
-
-        <button class="btn btn-primary btn-block" id="submitBtn" onclick="submitFinding()">Submit Finding</button>
       </div>
 
-      <!-- MIDDLE: Status & Metrics -->
-      <div class="card">
-        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Episode Status</h3>
+      <!-- RIGHT: Status -->
+      <div>
+        <div class="card">
+          <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Status</h3>
 
-        <div class="metrics">
-          <div class="metric">
-            <div class="label">Current Step</div>
-            <div class="value" id="currentStep">—</div>
+          <div class="metrics">
+            <div class="metric">
+              <div class="label">Step</div>
+              <div class="value" id="currentStep">—</div>
+            </div>
+            <div class="metric">
+              <div class="label">Page</div>
+              <div class="value" style="font-size: 14px;" id="activePage">—</div>
+            </div>
+            <div class="metric">
+              <div class="label">Reward</div>
+              <div class="value" id="stepReward">—</div>
+            </div>
+            <div class="metric">
+              <div class="label">Score</div>
+              <div class="value" id="cumulativeScore">—</div>
+            </div>
           </div>
-          <div class="metric">
-            <div class="label">Page</div>
-            <div class="value" style="font-size: 14px;" id="activePage">—</div>
-          </div>
-          <div class="metric">
-            <div class="label">Last Reward</div>
-            <div class="value" id="stepReward">—</div>
-          </div>
-          <div class="metric">
-            <div class="label">Total Score</div>
-            <div class="value" id="cumulativeScore">—</div>
-          </div>
-        </div>
 
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-          <div style="font-size: 12px; color: var(--text); text-transform: uppercase; margin-bottom: 12px; font-weight: 600;">Feedback</div>
-          <div id="feedbackArea" style="font-size: 13px; color: var(--text-bright); line-height: 1.6; min-height: 40px;">
-            Start an episode to see feedback
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Progress -->
-      <div class="card">
-        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Progress</h3>
-
-        <div style="margin-bottom: 16px;">
-          <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Completion</div>
-          <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-          </div>
-          <div style="font-size: 12px; color: var(--text); text-align: right;" id="stepCounter">0%</div>
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Score Trend</div>
-          <div class="chart-container">
-            <canvas id="scoreChart"></canvas>
-          </div>
-        </div>
-
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-          <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">Steps Completed</div>
-          <div class="step-history" id="stepHistory">
-            <div style="text-align: center; color: var(--text); padding: 20px 0; font-size: 12px;">No steps yet</div>
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+            <div style="font-size: 12px; color: var(--text); text-transform: uppercase; margin-bottom: 12px; font-weight: 600;">Feedback</div>
+            <div class="feedback-area" id="feedbackArea">Start an episode to begin</div>
           </div>
         </div>
       </div>
@@ -392,9 +391,6 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: cente
 const API_BASE = '';
 let currentDifficulty = 'easy';
 let episodeActive = false;
-let episodeSteps = [];
-let rewardHistory = [];
-let scoreChart = null;
 
 function setDifficulty(level) {
   currentDifficulty = level;
@@ -404,44 +400,65 @@ function setDifficulty(level) {
 
 async function startEpisode() {
   try {
-    console.log('Starting episode with difficulty:', currentDifficulty);
-
     const response = await fetch(`${API_BASE}/reset`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ task_id: currentDifficulty })
     });
 
-    if (!response.ok) throw new Error('Reset failed: ' + response.status);
-
     const data = await response.json();
-    console.log('Reset response:', data);
-
     episodeActive = true;
-    episodeSteps = [];
-    rewardHistory = [];
 
     updateDisplay(data);
+    enableStep('autofill');
+    enableStep('submit');
     clearForm();
-    updateChart();
-    document.getElementById('submitBtn').disabled = false;
 
+    showFeedback('success', 'Episode started. Click Auto-Fill to see the correct answer, or analyze the page yourself!');
   } catch (e) {
-    console.error('Error starting episode:', e);
-    showStatus('error', 'Failed to start: ' + e.message);
-    document.getElementById('submitBtn').disabled = true;
+    showFeedback('error', 'Failed to start: ' + e.message);
+  }
+}
+
+async function autoFillForm() {
+  try {
+    const response = await fetch(`${API_BASE}/reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ task_id: currentDifficulty })
+    });
+
+    const data = await response.json();
+    const groundTruth = data.observation?.ground_truth;
+
+    if (!groundTruth) {
+      showFeedback('error', 'No suggestion available for this page');
+      return;
+    }
+
+    // Fill form from ground truth
+    document.getElementById('finding_type').value = groundTruth.finding_type || 'issue';
+    document.getElementById('affected_element').value = groundTruth.affected_element || 'N/A';
+    document.getElementById('issue_category').value = groundTruth.issue_category || 'normal_behavior';
+    document.getElementById('severity').value = groundTruth.severity || 'none';
+    document.getElementById('recommendation').value = groundTruth.recommendation || '';
+    document.getElementById('fix_category').value = groundTruth.fix_category || 'no_fix_needed';
+    document.getElementById('impact_estimate').value = groundTruth.impact_estimate || '';
+    document.getElementById('confidence').value = groundTruth.confidence || 0.95;
+
+    showFeedback('success', 'Form auto-filled with the expected answer! Review and submit.');
+  } catch (e) {
+    showFeedback('error', 'Failed to auto-fill: ' + e.message);
   }
 }
 
 async function submitFinding() {
   if (!episodeActive) {
-    showStatus('error', 'Start an episode first');
+    showFeedback('error', 'Start an episode first');
     return;
   }
 
   try {
-    document.getElementById('submitBtn').disabled = true;
-
     const finding = {
       finding_type: document.getElementById('finding_type').value,
       affected_element: document.getElementById('affected_element').value || 'N/A',
@@ -453,124 +470,62 @@ async function submitFinding() {
       confidence: parseFloat(document.getElementById('confidence').value) || 0.5
     };
 
-    console.log('Submitting finding:', finding);
-
     const response = await fetch(`${API_BASE}/step`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(finding)
     });
 
-    if (!response.ok) throw new Error('Step failed: ' + response.status);
-
     const data = await response.json();
-    console.log('Step response:', data);
+    updateDisplay(data);
+    clearForm();
 
     const reward = data.reward || 0;
-    rewardHistory.push(reward);
-    episodeSteps.push({
-      step: data.observation?.current_step || episodeSteps.length + 1,
-      reward: reward,
-      category: finding.issue_category
-    });
-
-    updateDisplay(data);
-    updateChart();
-    clearForm();
+    if (reward > 0.5) showFeedback('success', 'Excellent! ' + (data.observation?.grader_feedback || ''));
+    else if (reward > 0) showFeedback('warning', 'Partial credit. ' + (data.observation?.grader_feedback || ''));
+    else showFeedback('error', 'Below target. ' + (data.observation?.grader_feedback || ''));
 
     if (data.done) {
       episodeActive = false;
-      document.getElementById('submitBtn').disabled = true;
-      showStatus('success', 'Episode complete!');
+      disableStep('submit');
+      showFeedback('success', 'Episode complete! Start a new one to continue.');
     }
-
   } catch (e) {
-    console.error('Error submitting:', e);
-    showStatus('error', 'Failed to submit: ' + e.message);
-  } finally {
-    document.getElementById('submitBtn').disabled = false;
+    showFeedback('error', 'Failed to submit: ' + e.message);
   }
 }
 
 function updateDisplay(data) {
   const obs = data.observation || {};
-  const reward = data.reward || 0;
-  const done = data.done || false;
-
   document.getElementById('currentStep').value = `${obs.current_step || 0}/${obs.total_steps || 1}`;
   document.getElementById('activePage').value = obs.current_page_data?.page_name || '—';
-  document.getElementById('stepReward').value = reward.toFixed(2);
+  document.getElementById('stepReward').value = (data.reward || 0).toFixed(2);
   document.getElementById('cumulativeScore').value = (obs.cumulative_score || 0).toFixed(2);
-  document.getElementById('feedbackArea').textContent = obs.grader_feedback || 'No feedback';
-
-  // Progress
-  if (obs.total_steps) {
-    const pct = (obs.current_step / obs.total_steps) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('stepCounter').textContent = Math.round(pct) + '%';
-  }
-
-  // Show step history
-  renderSteps();
-
-  // Status message
-  if (reward > 0.5) showStatus('success', 'Strong response!');
-  else if (reward > 0) showStatus('warning', 'Partial credit');
-  else if (reward >= 0) showStatus('error', 'Below target');
 }
 
-function renderSteps() {
-  const html = episodeSteps.map((s, i) => {
-    let cls = 'error';
-    if (s.reward > 0.5) cls = 'success';
-    else if (s.reward > 0) cls = 'warning';
-    return `<div class="step-item ${cls}"><span>S${s.step}: ${s.category}</span><strong>${s.reward.toFixed(2)}</strong></div>`;
-  }).join('');
-
-  document.getElementById('stepHistory').innerHTML = html || '<div style="text-align: center; color: var(--text); padding: 20px 0; font-size: 12px;">No steps yet</div>';
+function enableStep(step) {
+  const el = document.getElementById('step-' + step);
+  if (el) el.classList.remove('disabled');
+  if (step === 'autofill') document.getElementById('autoFillBtn').disabled = false;
+  if (step === 'submit') document.getElementById('submitBtn').disabled = false;
 }
 
-function updateChart() {
-  const ctx = document.getElementById('scoreChart').getContext('2d');
-  if (scoreChart) scoreChart.destroy();
-
-  const cumulative = rewardHistory.reduce((acc, r, i) => [...acc, (acc[i-1] || 0) + r], []);
-
-  scoreChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: cumulative.map((_, i) => i + 1),
-      datasets: [{
-        data: cumulative,
-        borderColor: '#fff',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        borderWidth: 2,
-        tension: 0.3,
-        fill: true,
-        pointRadius: 3
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)' } },
-        x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)' } }
-      }
-    }
-  });
+function disableStep(step) {
+  const el = document.getElementById('step-' + step);
+  if (el) el.classList.add('disabled');
+  if (step === 'autofill') document.getElementById('autoFillBtn').disabled = true;
+  if (step === 'submit') document.getElementById('submitBtn').disabled = true;
 }
 
-function showStatus(type, msg) {
+function showFeedback(type, msg) {
   const el = document.getElementById('feedbackArea');
-  const color = type === 'success' ? 'var(--success)' : type === 'warning' ? 'var(--warning)' : 'var(--error)';
-  el.innerHTML = `<span style="color: ${color};">${msg}</span>`;
+  el.className = 'feedback-area ' + type;
+  el.textContent = msg;
 }
 
 function clearForm() {
   document.getElementById('finding_type').value = 'issue';
-  document.getElementById('affected_element').value = 'N/A';
+  document.getElementById('affected_element').value = '';
   document.getElementById('issue_category').value = 'normal_behavior';
   document.getElementById('severity').value = 'none';
   document.getElementById('recommendation').value = '';
@@ -578,9 +533,6 @@ function clearForm() {
   document.getElementById('impact_estimate').value = '';
   document.getElementById('confidence').value = '0.5';
 }
-
-// Initialize
-document.getElementById('submitBtn').disabled = true;
 </script>
 
 </body>

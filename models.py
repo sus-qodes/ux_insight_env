@@ -149,6 +149,7 @@ class UXObservation(Observation):
     cumulative_score: float                             # Running score 0.0–1.0
     grader_feedback: str                                # Feedback on PREVIOUS step
     task_context: Dict[str, Any]                        # App metadata
+    ground_truth: Optional[Dict[str, Any]] = None       # Expected answer (for teaching playground)
 
 
 class UXState(State):

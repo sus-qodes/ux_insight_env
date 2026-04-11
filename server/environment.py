@@ -293,6 +293,37 @@ class UXInsightEnvironment(Environment):
         else:
             page_data = self._pages_data[-1]
 
+        #Extract ground truth for teaching mode
+        ground_truth_dict = None
+        if not done and self._current_step < len(self._pages_data):
+            current_page = page_data.page_name
+            problems = [p for p in self._embedded_problems
+                       if p.get("affected_page") == current_page and not p.get("red_herring")]
+
+            if problems:
+                p = problems[0]
+                ground_truth_dict = {
+                    "finding_type": "issue",
+                    "affected_element": p.get("affected_element", "Unknown Element"),
+                    "issue_category": p.get("problem_type", "normal_behavior"),
+                    "severity": p.get("severity", "medium"),
+                    "recommendation": p.get("expected_fix_description", "Improve user experience"),
+                    "fix_category": p.get("expected_fix_category", "redesign_element"),
+                    "impact_estimate": p.get("expected_impact_estimate", "Expected positive impact"),
+                    "confidence": 0.95
+                }
+            else:
+                ground_truth_dict = {
+                    "finding_type": "no_issue",
+                    "affected_element": "N/A",
+                    "issue_category": "normal_behavior",
+                    "severity": "none",
+                    "recommendation": "No fix required",
+                    "fix_category": "no_fix_needed",
+                    "impact_estimate": "Normal engagement metrics",
+                    "confidence": 0.95
+                }
+
         if cumulative_score is None:
             max_steps = MAX_STEPS_BY_TASK.get(self._task_id, 1)
             cumulative_score = min(max(sum(self._episode_rewards) / max_steps, 0.0), 1.0)
@@ -317,6 +348,7 @@ class UXInsightEnvironment(Environment):
                 "total_app_sessions": sum(p.total_sessions for p in self._pages_data),
                 "primary_device": "Mobile (67% of traffic)",
             },
+            ground_truth=ground_truth_dict,
             done=done,
             reward=reward,
         )
