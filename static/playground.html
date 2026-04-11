@@ -71,6 +71,13 @@ main { padding: 40px 0; }
   color: var(--white);
   background: var(--surface);
   border-color: #3f3f46;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .btn:disabled {
@@ -89,65 +96,73 @@ main { padding: 40px 0; }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--text-bright);
+  color: var(--bg);
+  border-color: var(--text-bright);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.15);
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--text-bright);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--white);
+  border-color: #3f3f46;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn-block { width: 100%; }
 
 /* Workflow */
-.workflow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-}
-
 .workflow-step {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  gap: 10px;
+  min-height: 90px;
+  justify-content: flex-start;
 }
 
-.workflow-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.workflow-step.disabled .btn {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.workflow-step.active .btn:not(:disabled) {
+  background: var(--white);
+  color: var(--bg);
+  border-color: var(--white);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 .workflow-label {
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text);
-  margin-bottom: 6px;
+  font-weight: 600;
   text-align: center;
-  min-width: 90px;
 }
-
-.workflow-arrow {
-  color: var(--border);
-  font-size: 20px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-.workflow-step.disabled .btn { opacity: 0.4; cursor: not-allowed; }
-.workflow-step.active .btn:not(:disabled) { background: var(--white); color: var(--bg); border-color: var(--white); }
 
 /* Difficulty selector */
 .difficulty-group {
-  display: inline-grid;
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 0;
+  width: 100%;
 }
 
 .difficulty-group .btn {
   padding: 10px;
   font-size: 12px;
   width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .difficulty-group .btn.active {
@@ -209,6 +224,18 @@ main { padding: 40px 0; }
 /* Chart */
 .chart-container { position: relative; height: 150px; margin-bottom: 16px; }
 
+/* Responsive */
+@media (max-width: 1024px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .header h1 { font-size: 24px; }
+  .workflow-label { font-size: 11px; }
+  .btn { padding: 10px 16px; font-size: 12px; }
+  .difficulty-group { grid-template-columns: 1fr; }
+}
+
 footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text); }
 </style>
 </head>
@@ -233,44 +260,41 @@ footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: cente
     </div>
 
     <!-- SEQUENTIAL WORKFLOW -->
-    <div class="workflow">
-      <!-- Step 1: Select Difficulty -->
-      <div class="workflow-step">
-        <div class="workflow-label">1. Difficulty</div>
-        <div class="workflow-button">
-          <div class="difficulty-group" style="margin-bottom: 0;">
+    <div style="margin-bottom: 48px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+        <!-- Step 1: Select Difficulty -->
+        <div class="workflow-step">
+          <div class="workflow-label">Select Difficulty</div>
+          <div class="difficulty-group">
             <button class="btn active" id="btn-easy" onclick="setDifficulty('easy')">Easy</button>
             <button class="btn" id="btn-medium" onclick="setDifficulty('medium')">Medium</button>
             <button class="btn" id="btn-hard" onclick="setDifficulty('hard')">Hard</button>
           </div>
         </div>
+
+        <!-- Step 2: Start -->
+        <div class="workflow-step">
+          <div class="workflow-label">Start Episode</div>
+          <button class="btn btn-primary btn-block" style="height: 44px;" onclick="startEpisode()">Start</button>
+        </div>
+
+        <!-- Step 3: Auto-Fill -->
+        <div class="workflow-step disabled" id="step-autofill">
+          <div class="workflow-label">Or Auto-Fill</div>
+          <button class="btn btn-secondary btn-block" style="height: 44px;" id="autoFillBtn" onclick="autoFillForm()" disabled>Auto-Fill</button>
+        </div>
+
+        <!-- Step 4: Submit -->
+        <div class="workflow-step disabled" id="step-submit">
+          <div class="workflow-label">Submit Answer</div>
+          <button class="btn btn-primary btn-block" style="height: 44px;" id="submitBtn" onclick="submitFinding()" disabled>Submit</button>
+        </div>
       </div>
 
-      <!-- Arrow -->
-      <div class="workflow-arrow">→</div>
-
-      <!-- Step 2: Start -->
-      <div class="workflow-step" id="step-start">
-        <div class="workflow-label">2. Start Episode</div>
-        <button class="btn btn-primary" onclick="startEpisode()">Start</button>
-      </div>
-
-      <!-- Arrow -->
-      <div class="workflow-arrow">→</div>
-
-      <!-- Step 3: Auto-Fill -->
-      <div class="workflow-step disabled" id="step-autofill">
-        <div class="workflow-label">3. Or Auto-Fill</div>
-        <button class="btn" id="autoFillBtn" onclick="autoFillForm()" disabled>Auto-Fill</button>
-      </div>
-
-      <!-- Arrow -->
-      <div class="workflow-arrow">→</div>
-
-      <!-- Step 4: Submit -->
-      <div class="workflow-step disabled" id="step-submit">
-        <div class="workflow-label">4. Submit</div>
-        <button class="btn btn-primary" id="submitBtn" onclick="submitFinding()" disabled>Submit</button>
+      <!-- Progress Indicator -->
+      <div style="display: flex; align-items: center; gap: 12px; justify-content: center; color: var(--text); font-size: 12px;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--white);"></div>
+        <span id="progressText">Select difficulty to begin</span>
       </div>
     </div>
 
@@ -397,10 +421,13 @@ function setDifficulty(level) {
   currentDifficulty = level;
   document.querySelectorAll('.difficulty-group .btn').forEach(b => b.classList.remove('active'));
   document.getElementById('btn-' + level).classList.add('active');
+  updateProgressText('Ready to start. Click "Start" button.');
 }
 
 async function startEpisode() {
   try {
+    updateProgressText('Loading episode...');
+
     const response = await fetch(`${API_BASE}/reset`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -416,8 +443,10 @@ async function startEpisode() {
     enableStep('submit');
     clearForm();
 
-    showFeedback('success', 'Episode started. Click Auto-Fill to see the correct answer, or analyze the page yourself!');
+    updateProgressText('Episode ready! Click "Auto-Fill" or analyze manually, then "Submit".');
+    showFeedback('success', 'Episode started with ' + currentObservation.total_steps + ' page(s) to analyze.');
   } catch (e) {
+    updateProgressText('Error loading episode. Try again.');
     showFeedback('error', 'Failed to start: ' + e.message);
   }
 }
@@ -425,6 +454,7 @@ async function startEpisode() {
 async function autoFillForm() {
   try {
     if (!currentObservation || !currentObservation.ground_truth) {
+      updateProgressText('No suggestion available for this page.');
       showFeedback('error', 'No suggestion available for this page');
       return;
     }
@@ -441,19 +471,24 @@ async function autoFillForm() {
     document.getElementById('impact_estimate').value = gt.impact_estimate || '';
     document.getElementById('confidence').value = gt.confidence || 0.95;
 
-    showFeedback('success', 'Form auto-filled with the expected answer! Review and submit.');
+    updateProgressText('Form filled! Review and click "Submit" to check your answer.');
+    showFeedback('success', 'Form auto-filled with the expected answer. Review and submit to compare.');
   } catch (e) {
+    updateProgressText('Error auto-filling. Try again.');
     showFeedback('error', 'Failed to auto-fill: ' + e.message);
   }
 }
 
 async function submitFinding() {
   if (!episodeActive) {
+    updateProgressText('Start an episode first.');
     showFeedback('error', 'Start an episode first');
     return;
   }
 
   try {
+    updateProgressText('Evaluating your finding...');
+
     const finding = {
       finding_type: document.getElementById('finding_type').value,
       affected_element: document.getElementById('affected_element').value || 'N/A',
@@ -477,16 +512,29 @@ async function submitFinding() {
     clearForm();
 
     const reward = data.reward || 0;
-    if (reward > 0.5) showFeedback('success', 'Excellent! ' + (data.observation?.grader_feedback || ''));
-    else if (reward > 0) showFeedback('warning', 'Partial credit. ' + (data.observation?.grader_feedback || ''));
-    else showFeedback('error', 'Below target. ' + (data.observation?.grader_feedback || ''));
 
     if (data.done) {
       episodeActive = false;
       disableStep('submit');
-      showFeedback('success', 'Episode complete! Start a new one to continue.');
+      const finalScore = (data.observation?.cumulative_score || 0).toFixed(2);
+      updateProgressText('Episode complete! Score: ' + finalScore + '. Start a new episode to continue.');
+      showFeedback('success', 'Episode complete! Final score: ' + finalScore);
+    } else {
+      clearForm();
+
+      if (reward > 0.5) {
+        updateProgressText('Excellent! Moving to next page...');
+        showFeedback('success', 'Excellent! ' + (data.observation?.grader_feedback || 'Good analysis!'));
+      } else if (reward > 0) {
+        updateProgressText('Partial credit. Moving to next page...');
+        showFeedback('warning', 'Partial credit. ' + (data.observation?.grader_feedback || 'Review the page and try again.'));
+      } else {
+        updateProgressText('Below target. Try the next page...');
+        showFeedback('error', 'Below target. ' + (data.observation?.grader_feedback || 'Analyze more carefully.'));
+      }
     }
   } catch (e) {
+    updateProgressText('Error submitting. Try again.');
     showFeedback('error', 'Failed to submit: ' + e.message);
   }
 }
@@ -517,6 +565,10 @@ function showFeedback(type, msg) {
   const el = document.getElementById('feedbackArea');
   el.className = 'feedback-area ' + type;
   el.textContent = msg;
+}
+
+function updateProgressText(msg) {
+  document.getElementById('progressText').textContent = msg;
 }
 
 function clearForm() {
