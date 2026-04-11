@@ -49,6 +49,123 @@ css = """
 .prose, .markdown-text, .md { color: #a1a1aa !important; }
 .prose h1, .prose h2, .prose h3 { color: #ffffff !important; }
 #playground-examples { margin-top: 16px; }
+
+/* ===== MICRO-ANIMATIONS ===== */
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes progressFill {
+    from { width: 0%; }
+    to { width: var(--progress-width, 100%); }
+}
+
+@keyframes lineDrawin {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+}
+
+/* ===== INTERACTIVE ELEMENTS ===== */
+button, [role="button"] {
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.15) !important;
+}
+
+button:active:not(:disabled) {
+    transform: translateY(0) !important;
+}
+
+button:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+/* ===== FEEDBACK CARD ANIMATIONS ===== */
+.feedback-card {
+    animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.feedback-icon {
+    animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.score-card {
+    animation: slideInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation-delay: 0.1s !important;
+    animation-fill-mode: both !important;
+}
+
+.status-card {
+    animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    animation-delay: 0.2s !important;
+    animation-fill-mode: both !important;
+}
+
+/* ===== PROGRESS VISUALIZATIONS ===== */
+.progress-fill {
+    animation: progressFill 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.progress-bar {
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ===== LOADING STATES ===== */
+.loading-spinner {
+    animation: spin 0.8s linear infinite !important;
+}
+
+.loading-pulse {
+    animation: pulse 1.5s ease-in-out infinite !important;
+}
+
+/* ===== DIFFICULTY BUTTONS ===== */
+.difficulty-btn {
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.difficulty-btn.selected {
+    background-color: #ffffff !important;
+    color: #09090b !important;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
+}
+
+.difficulty-btn:hover:not(.selected):not(:disabled) {
+    border-color: #8b5cf6 !important;
+    box-shadow: inset 0 0 0 1px #8b5cf6 !important;
+}
+
+/* ===== SVG ANIMATIONS ===== */
+svg.icon-animated {
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
 """
 
 def custom_gradio_builder(
@@ -133,10 +250,11 @@ def custom_gradio_builder(
             with gr.Column(scale=2):
                 gr.Markdown("### Action Form")
                 
+                # Safe defaults - encourage user to click Auto-Fill for ground truth
                 default_scenario = [
-                    "issue", "Flash Sale banner image", "dead_click", "high",
-                    "Make the Flash Sale banner image clickable and link it directly to the active flash sale page so users who tap the promotional banner reach the expected deals instead of waiting after a dead click.",
-                    "fix_broken_link", "Expected 20-30% reduction in dead clicks.", 0.9
+                    "no_issue", "N/A", "normal_behavior", "none",
+                    "Page metrics are within expected ranges. No issue detected.",
+                    "no_fix_needed", "N/A", 0.5
                 ]
 
                 step_inputs = []
