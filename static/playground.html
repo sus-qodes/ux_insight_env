@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playground -- UX Insight Analyst</title>
+<style>
+:root {
+  --bg: #09090b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --border: #27272a;
+  --text: #a1a1aa;
+  --text-bright: #d4d4d8;
+  --heading: #fafafa;
+  --white: #fff;
+  --code-bg: #0c0c0e;
+  --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
+a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--text-bright); }
+code, pre { font-family: var(--mono); font-size: 13px; }
+pre { background: var(--code-bg); border: 1px solid var(--border); padding: 16px 20px; overflow-x: auto; line-height: 1.6; color: var(--text-bright); }
+h1, h2, h3, h4 { color: var(--heading); font-weight: 600; letter-spacing: -0.02em; }
+h1 { font-size: 28px; margin-bottom: 16px; }
+h2 { font-size: 20px; text-transform: uppercase; letter-spacing: 0.08em; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+h3 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+p { margin-bottom: 10px; }
+
+/* Nav */
+nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 0; }
+nav .container { display: flex; align-items: center; gap: 32px; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+nav .logo { color: var(--white); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none; white-space: nowrap; }
+nav .links { display: flex; gap: 24px; flex-wrap: wrap; }
+nav .links a { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
+nav .links a:hover { color: var(--white); }
+
+/* Container */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+main { padding: 40px 0; }
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Card */
+.card { background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: 8px; }
+.card:hover { border-color: #3f3f46; background: #14141a; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; border: 1px solid var(--border); background: transparent; color: var(--text-bright); cursor: pointer; border-radius: 6px; transition: all 0.15s; }
+.btn:hover { color: var(--white); background: var(--surface-2); border-color: #3f3f46; }
+.btn-primary { background: var(--white); color: var(--bg); border-color: var(--white); }
+.btn-primary:hover { background: var(--text-bright); color: var(--bg); border-color: var(--text-bright); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Form */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 500; color: var(--text-bright); text-transform: uppercase; letter-spacing: 0.06em; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-bright);
+  font-family: var(--sans);
+  font-size: 13px;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: var(--white);
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+/* Info box */
+.info-box { padding: 12px; background: var(--surface-2); border-left: 4px solid var(--border); border-radius: 4px; margin-bottom: 16px; }
+
+/* Status indicators */
+.status { display: inline-block; padding: 2px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px; font-weight: 600; }
+.status.success { background: #064e3b; color: #10b981; border: 1px solid #10b981; }
+.status.warning { background: #451a03; color: #f59e0b; border: 1px solid #f59e0b; }
+.status.error { background: #7f1d1d; color: #ef4444; border: 1px solid #ef4444; }
+
+/* Loading */
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--white); border-radius: 50%; animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Footer */
+footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text); }
+footer a { color: var(--text-bright); }
+
+/* Utility */
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.text-muted { color: var(--text); }
+.text-bright { color: var(--text-bright); }
+.mono { font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo">UX INSIGHT ANALYST</a>
+    <div class="links">
+      <a href="/#overview">Overview</a>
+      <a href="/#tasks">Tasks</a>
+      <a href="/#demo">Demo</a>
+      <a href="/#baselines">Baselines</a>
+      <a href="/documentation">Docs</a>
+      <a href="/web" style="color: var(--white); font-weight: 600;">Playground</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+    <h1>Playground</h1>
+    <p class="text-bright mb-20">Analyze UX issues in real-time. Reset an episode, submit findings, and see instant feedback.</p>
+
+    <div class="grid-2">
+      <!-- LEFT: Form -->
+      <div class="card">
+        <h3>Submit Finding</h3>
+
+        <div class="form-group">
+          <label>Finding Type</label>
+          <select id="finding_type" required>
+            <option value="issue">Issue</option>
+            <option value="no_issue">No Issue</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Affected Element</label>
+          <input id="affected_element" type="text" placeholder="e.g., Flash Sale Banner" value="N/A">
+        </div>
+
+        <div class="form-group">
+          <label>Issue Category</label>
+          <select id="issue_category" required>
+            <option value="normal_behavior">Normal Behavior</option>
+            <option value="rage_click">Rage Click</option>
+            <option value="dead_click">Dead Click</option>
+            <option value="funnel_dropoff">Funnel Dropoff</option>
+            <option value="mobile_layout_break">Mobile Layout Break</option>
+            <option value="quickback">Quick Back</option>
+            <option value="scroll_dropoff">Scroll Dropoff</option>
+            <option value="form_abandonment">Form Abandonment</option>
+            <option value="cta_invisible">CTA Invisible</option>
+            <option value="search_no_results">Search No Results</option>
+            <option value="high_bounce">High Bounce</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Severity</label>
+          <select id="severity" required>
+            <option value="none">None</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Recommendation</label>
+          <textarea id="recommendation" placeholder="Specific fix to implement..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Fix Category</label>
+          <select id="fix_category" required>
+            <option value="no_fix_needed">No Fix Needed</option>
+            <option value="fix_broken_link">Fix Broken Link</option>
+            <option value="redesign_element">Redesign Element</option>
+            <option value="improve_ux_copy">Improve UX Copy</option>
+            <option value="mobile_optimization">Mobile Optimization</option>
+            <option value="performance_improvement">Performance Improvement</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Impact Estimate</label>
+          <input id="impact_estimate" type="text" placeholder="e.g., Expected 20-30% reduction..." value="Expected positive impact">
+        </div>
+
+        <div class="form-group">
+          <label>Confidence</label>
+          <input id="confidence" type="number" min="0" max="1" step="0.01" value="0.5">
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-primary" id="submitBtn" onclick="submitFinding()">Submit Finding</button>
+          <button class="btn" id="autoFillBtn" onclick="autoFillForm()">Auto-Fill</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Status & Control -->
+      <div>
+        <!-- Control Card -->
+        <div class="card mb-20">
+          <h3>Environment Control</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+            <button class="btn" onclick="resetWithDifficulty('easy')">Easy</button>
+            <button class="btn" onclick="resetWithDifficulty('medium')">Medium</button>
+            <button class="btn" onclick="resetWithDifficulty('hard')">Hard</button>
+          </div>
+          <button class="btn btn-primary" style="width: 100%;" onclick="resetEnvironment()">Reset Environment</button>
+        </div>
+
+        <!-- Metrics Card -->
+        <div class="card">
+          <h3>Metrics & Status</h3>
+
+          <div class="form-group">
+            <label>Current Step</label>
+            <input type="text" id="currentStep" value="0/0" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Active Page</label>
+            <input type="text" id="activePage" value="—" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Step Reward</label>
+            <input type="text" id="stepReward" value="0.00" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Cumulative Score</label>
+            <input type="text" id="cumulativeScore" value="0.00" readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <input type="text" id="status" value="Ready to start" readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="card mt-20">
+      <h3>Latest Feedback</h3>
+      <div id="feedbackArea" class="info-box" style="border-left: none; background: transparent; padding: 0;">
+        <p style="text-align: center; color: var(--text);">Submit a finding to see results</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>UX Insight Analyst Environment · <a href="/web">Playground</a> · <a href="/documentation">Documentation</a> · <a href="/health">Health</a> · <a href="/docs">API Schema</a></p>
+</footer>
+
+<script>
+const API_BASE = '';
+
+async function resetEnvironment() {
+  try {
+    document.getElementById('submitBtn').disabled = true;
+    const response = await fetch(`${API_BASE}/reset`, { method: 'POST' });
+    const data = await response.json();
+    updateStatus(data);
+    clearForm();
+  } catch (e) {
+    showError('Failed to reset: ' + e.message);
+  } finally {
+    document.getElementById('submitBtn').disabled = false;
+  }
+}
+
+async function resetWithDifficulty(difficulty) {
+  try {
+    document.getElementById('submitBtn').disabled = true;
+    const response = await fetch(`${API_BASE}/reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ task_id: difficulty })
+    });
+    const data = await response.json();
+    updateStatus(data);
+    clearForm();
+  } catch (e) {
+    showError('Failed to reset: ' + e.message);
+  } finally {
+    document.getElementById('submitBtn').disabled = false;
+  }
+}
+
+async function submitFinding() {
+  try {
+    document.getElementById('submitBtn').disabled = true;
+
+    const finding = {
+      finding_type: document.getElementById('finding_type').value,
+      affected_element: document.getElementById('affected_element').value || 'N/A',
+      issue_category: document.getElementById('issue_category').value,
+      severity: document.getElementById('severity').value,
+      recommendation: document.getElementById('recommendation').value || '—',
+      fix_category: document.getElementById('fix_category').value,
+      impact_estimate: document.getElementById('impact_estimate').value || 'N/A',
+      confidence: parseFloat(document.getElementById('confidence').value) || 0.5
+    };
+
+    const response = await fetch(`${API_BASE}/step`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(finding)
+    });
+
+    const data = await response.json();
+    updateStatus(data);
+    showFeedback(data);
+  } catch (e) {
+    showError('Failed to submit: ' + e.message);
+  } finally {
+    document.getElementById('submitBtn').disabled = false;
+  }
+}
+
+async function autoFillForm() {
+  try {
+    const response = await fetch(`${API_BASE}/observation`);
+    const obs = await response.json();
+
+    document.getElementById('finding_type').value = 'issue';
+    document.getElementById('affected_element').value = obs.affected_element || 'N/A';
+    document.getElementById('issue_category').value = obs.issue_category || 'normal_behavior';
+    document.getElementById('severity').value = obs.severity || 'medium';
+    document.getElementById('recommendation').value = obs.recommendation || 'Improve user experience based on analytics';
+    document.getElementById('fix_category').value = obs.fix_category || 'redesign_element';
+    document.getElementById('impact_estimate').value = obs.impact_estimate || 'Expected positive impact';
+    document.getElementById('confidence').value = obs.confidence || 0.7;
+  } catch (e) {
+    showError('Failed to get suggestions: ' + e.message);
+  }
+}
+
+function updateStatus(data) {
+  const obs = data.observation || {};
+  document.getElementById('currentStep').value = `${obs.current_step || 0}/${obs.total_steps || 1}`;
+  document.getElementById('activePage').value = obs.current_page_data?.page_name || '—';
+  document.getElementById('status').value = data.done ? 'Episode Complete' : 'In Progress';
+
+  if (obs.cumulative_score !== undefined) {
+    document.getElementById('cumulativeScore').value = obs.cumulative_score.toFixed(2);
+  }
+}
+
+function showFeedback(data) {
+  const reward = data.reward || 0;
+  const done = data.done || false;
+  const obs = data.observation || {};
+  const feedback = obs.grader_feedback || 'No feedback';
+
+  let statusClass = 'error';
+  if (reward > 0.5) statusClass = 'success';
+  else if (reward > 0) statusClass = 'warning';
+
+  const html = `
+    <div style="margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+        <span class="status ${statusClass}">${statusClass.toUpperCase()}</span>
+        <span style="color: var(--text-bright);">${reward.toFixed(2)} reward</span>
+      </div>
+      <p style="color: var(--text-bright); line-height: 1.6;">${feedback}</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+      <div style="background: var(--surface-2); padding: 12px; border-radius: 6px;">
+        <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 6px;">Step Reward</div>
+        <div style="font-size: 18px; font-weight: 700; color: var(--text-bright);">${reward.toFixed(2)}</div>
+      </div>
+      <div style="background: var(--surface-2); padding: 12px; border-radius: 6px;">
+        <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 6px;">Cumulative</div>
+        <div style="font-size: 18px; font-weight: 700; color: var(--text-bright);">${(obs.cumulative_score || 0).toFixed(2)}</div>
+      </div>
+    </div>
+    ${done ? '<div style="padding: 12px; background: #1e3a8a; border: 1px solid #3b82f6; border-radius: 6px; color: #bfdbfe; text-align: center;">Episode Complete</div>' : ''}
+  `;
+
+  document.getElementById('feedbackArea').innerHTML = html;
+  document.getElementById('stepReward').value = reward.toFixed(2);
+}
+
+function showError(msg) {
+  document.getElementById('feedbackArea').innerHTML = `<p style="color: #ef4444;">${msg}</p>`;
+}
+
+function clearForm() {
+  document.getElementById('finding_type').value = 'issue';
+  document.getElementById('affected_element').value = 'N/A';
+  document.getElementById('issue_category').value = 'normal_behavior';
+  document.getElementById('severity').value = 'none';
+  document.getElementById('recommendation').value = '';
+  document.getElementById('fix_category').value = 'no_fix_needed';
+  document.getElementById('impact_estimate').value = 'Expected positive impact';
+  document.getElementById('confidence').value = '0.5';
+}
+
+// Initialize on load
+window.addEventListener('load', resetEnvironment);
+</script>
+
+</body>
+</html>
