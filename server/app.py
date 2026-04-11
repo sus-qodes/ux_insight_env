@@ -35,28 +35,34 @@ _INDEX_HTML = (_STATIC / "index.html").read_text(encoding="utf-8")
 _PLAYGROUND_HTML = (_STATIC / "playground.html").read_text(encoding="utf-8")
 _DOCS_HTML = (_STATIC / "docs.html").read_text(encoding="utf-8")
 
-# Remove OpenEnv's default root route to allow our custom landing page
-app.router.routes = [r for r in app.router.routes if r.path != "/"]
+# Remove OpenEnv's default routes (gradiio ui) to use our custom pages
+# Filter out paths that conflict with our custom UI
+_EXCLUDED_PATHS = {"/", "/web", "/documentation", "/config"}
+app.router.routes = [
+    r for r in app.router.routes
+    if not (hasattr(r, "path") and r.path in _EXCLUDED_PATHS)
+]
 
 # ---------------------------------------------------------------------------
 # Custom pages — landing page, playground, and documentation
+# Registered AFTER filtering to take priority
 # ---------------------------------------------------------------------------
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def landing_page():
-    """Serve the project landing page."""
+    """Serve the project landing page with full documentation and demo info."""
     return _INDEX_HTML
 
 
 @app.get("/web", response_class=HTMLResponse, include_in_schema=False)
 async def playground_page():
-    """Serve the interactive playground."""
+    """Serve the interactive playground for testing the environment."""
     return _PLAYGROUND_HTML
 
 
 @app.get("/documentation", response_class=HTMLResponse, include_in_schema=False)
 async def documentation_page():
-    """Serve the full documentation page."""
+    """Serve the full API and usage documentation."""
     return _DOCS_HTML
 
 
