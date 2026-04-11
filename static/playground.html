@@ -27,48 +27,37 @@
 html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.7; }
 a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
-a:hover { color: var(--text-bright); }
 
 /* Nav */
 nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 0; }
 nav .container { display: flex; align-items: center; gap: 32px; max-width: 1400px; margin: 0 auto; padding: 0 24px; }
 nav .logo { color: var(--white); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none; }
-nav .links { display: flex; gap: 24px; flex-wrap: wrap; }
+nav .links { display: flex; gap: 24px; }
 nav .links a { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; }
-nav .links a:hover { color: var(--white); }
 
-/* Container */
 .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
 main { padding: 40px 0; }
 
-/* Page header */
-.page-header { margin-bottom: 32px; }
-.page-header h1 { font-size: 32px; margin-bottom: 8px; color: var(--white); }
-.page-header p { color: var(--text); font-size: 14px; }
+/* Header */
+.header { margin-bottom: 32px; }
+.header h1 { font-size: 32px; margin-bottom: 8px; color: var(--white); }
+.header p { color: var(--text); font-size: 14px; }
 
-/* Control Panel (Top) */
-.control-panel {
+/* Card */
+.card {
   background: linear-gradient(135deg, rgb(17, 17, 19) 0%, rgb(15, 15, 18) 100%);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 24px;
-  margin-bottom: 32px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px;
-  align-items: flex-start;
 }
 
-.control-group h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text); margin-bottom: 12px; font-weight: 600; }
-.control-group { display: flex; flex-direction: column; gap: 10px; }
-
-/* Unified Button Styles */
+/* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 11px 16px;
+  padding: 12px 20px;
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -79,17 +68,12 @@ main { padding: 40px 0; }
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.2s;
-  white-space: nowrap;
 }
 
 .btn:hover:not(:disabled) {
   color: var(--white);
   background: var(--surface);
   border-color: #3f3f46;
-}
-
-.btn:active:not(:disabled) {
-  transform: scale(0.98);
 }
 
 .btn:disabled {
@@ -102,55 +86,34 @@ main { padding: 40px 0; }
   color: var(--bg);
   border-color: var(--white);
   font-weight: 700;
+  padding: 14px 24px;
+  font-size: 14px;
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--text-bright);
-  color: var(--bg);
-  border-color: var(--text-bright);
-}
-
-.btn-secondary {
-  background: var(--surface-2);
-  color: var(--text-bright);
-}
-
-/* Difficulty buttons group */
-.btn-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.btn-group .btn {
-  padding: 10px 12px;
-  font-size: 12px;
-}
-
-.btn-group .btn.active {
-  background: var(--white);
-  color: var(--bg);
-  border-color: var(--white);
-  font-weight: 700;
 }
 
 .btn-block { width: 100%; }
 
-/* Bento Grid */
-.bento-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-@media (max-width: 1024px) { .bento-grid { grid-template-columns: 1fr 1fr; } }
-
-/* Bento cards */
-.bento-card {
-  background: linear-gradient(135deg, rgb(17, 17, 19) 0%, rgb(15, 15, 18) 100%);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Difficulty buttons */
+.difficulty-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
 }
-.bento-card:hover { border-color: #3f3f46; }
-.bento-card h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-bright); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-.bento-card h3 svg { width: 16px; height: 16px; opacity: 0.6; }
+
+.difficulty-group .btn {
+  padding: 10px;
+  font-size: 12px;
+}
+
+.difficulty-group .btn.active {
+  background: var(--white);
+  color: var(--bg);
+  border-color: var(--white);
+}
 
 /* Form */
 .form-group { margin-bottom: 16px; }
@@ -164,93 +127,86 @@ main { padding: 40px 0; }
   font-family: var(--sans);
   font-size: 13px;
   border-radius: 6px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
   outline: none;
   border-color: var(--white);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
 }
-.form-group textarea { resize: vertical; min-height: 70px; font-family: var(--sans); }
+.form-group textarea { resize: vertical; min-height: 70px; }
 
-/* Metrics grid */
-.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.metric-box { background: var(--surface-2); padding: 12px; border-radius: 6px; border: 1px solid transparent; transition: all 0.2s; }
-.metric-box .label { font-size: 11px; color: var(--text); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-.metric-box .value { font-size: 18px; font-weight: 700; color: var(--text-bright); font-family: var(--mono); }
-.metric-box.success { border-color: var(--success); background: rgba(16, 185, 129, 0.05); }
-.metric-box.warning { border-color: var(--warning); background: rgba(245, 158, 11, 0.05); }
-.metric-box.error { border-color: var(--error); background: rgba(239, 68, 68, 0.05); }
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 24px; }
 
-/* Step timeline */
-.step-timeline { margin-bottom: 20px; }
-.step-progress { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-.step-progress-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.step-progress-fill { height: 100%; background: var(--white); border-radius: 2px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.step-counter { font-size: 12px; color: var(--text); font-weight: 600; font-family: var(--mono); min-width: 40px; text-align: right; }
+@media (max-width: 1024px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
 
-/* Step items */
-.step-items { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+/* Metrics */
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.metric {
+  background: var(--surface-2);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.metric .label { font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 4px; }
+.metric .value { font-size: 20px; font-weight: 700; color: var(--text-bright); font-family: var(--mono); }
+
+/* Step history */
+.step-history { max-height: 200px; overflow-y: auto; }
 .step-item {
   padding: 10px;
   background: var(--surface-2);
   border-radius: 6px;
+  margin-bottom: 8px;
   font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  animation: slideIn 0.3s ease-out;
   border-left: 3px solid var(--border);
+  display: flex;
+  justify-content: space-between;
 }
 .step-item.success { border-left-color: var(--success); }
 .step-item.warning { border-left-color: var(--warning); }
 .step-item.error { border-left-color: var(--error); }
-.step-item .step-num { font-weight: 700; color: var(--text); min-width: 24px; }
-.step-item .step-reward { margin-left: auto; font-weight: 700; font-family: var(--mono); }
 
-@keyframes slideIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
-
-/* Charts */
-.chart-container { position: relative; height: 200px; margin-bottom: 16px; }
-.chart-container canvas { max-height: 200px; }
-
-/* Feedback card */
-.feedback-card {
-  background: linear-gradient(135deg, rgba(17, 17, 19, 0.5) 0%, rgba(15, 15, 18, 0.5) 100%);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+/* Progress */
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
 }
-.feedback-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
-.feedback-badge.success { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
-.feedback-badge.warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
-.feedback-badge.error { background: rgba(239, 68, 68, 0.1); color: var(--error); border: 1px solid rgba(239, 68, 68, 0.2); }
-.feedback-text { color: var(--text-bright); line-height: 1.6; margin-bottom: 16px; }
+.progress-fill { height: 100%; background: var(--white); border-radius: 2px; transition: width 0.3s; }
 
-/* Autofill suggestion */
-.autofill-hint { background: var(--surface-2); border-left: 3px solid var(--border); padding: 10px 12px; border-radius: 4px; font-size: 12px; color: var(--text); margin-top: 4px; display: none; }
-.autofill-hint.show { display: block; animation: slideIn 0.2s ease-out; }
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .control-panel { grid-template-columns: 1fr; }
-  .bento-grid { grid-template-columns: 1fr; }
-  .metrics-grid { grid-template-columns: 1fr; }
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 12px;
 }
+.status-badge.success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.status-badge.warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+.status-badge.error { background: rgba(239, 68, 68, 0.1); color: var(--error); }
 
-@media (max-width: 768px) {
-  .control-panel { grid-template-columns: 1fr; }
-  .bento-grid { grid-template-columns: 1fr; }
-  .metrics-grid { grid-template-columns: 1fr; }
-  .page-header h1 { font-size: 24px; }
-}
+/* Feedback */
+.feedback { color: var(--text-bright); line-height: 1.6; }
+
+/* Chart */
+.chart-container { position: relative; height: 150px; margin-bottom: 16px; }
+
+footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text); }
 
 /* Scrollbar */
-.step-items::-webkit-scrollbar { width: 6px; }
-.step-items::-webkit-scrollbar-track { background: var(--surface-2); border-radius: 3px; }
-.step-items::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-.step-items::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+.step-history::-webkit-scrollbar { width: 6px; }
+.step-history::-webkit-scrollbar-track { background: var(--surface-2); border-radius: 3px; }
+.step-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -261,8 +217,6 @@ main { padding: 40px 0; }
     <div class="links">
       <a href="/#overview">Overview</a>
       <a href="/#tasks">Tasks</a>
-      <a href="/#demo">Demo</a>
-      <a href="/#baselines">Baselines</a>
       <a href="/documentation">Docs</a>
       <a href="/web" style="color: var(--white); font-weight: 600;">Playground</a>
     </div>
@@ -271,50 +225,32 @@ main { padding: 40px 0; }
 
 <main>
   <div class="container">
-    <div class="page-header">
+    <div class="header">
       <h1>Interactive Playground</h1>
-      <p>Analyze UX issues in real-time. Select difficulty, submit findings, and watch your score evolve.</p>
+      <p>Select difficulty, start an episode, analyze pages, and submit findings.</p>
     </div>
 
-    <!-- UNIFIED CONTROL PANEL -->
-    <div class="control-panel">
-      <!-- Difficulty Selection -->
-      <div class="control-group">
-        <h4>Select Difficulty</h4>
-        <div class="btn-group">
-          <button class="btn btn-secondary active" id="btn-easy" onclick="setDifficulty('easy')">Easy</button>
-          <button class="btn btn-secondary" id="btn-medium" onclick="setDifficulty('medium')">Medium</button>
-          <button class="btn btn-secondary" id="btn-hard" onclick="setDifficulty('hard')">Hard</button>
+    <!-- SETUP SECTION -->
+    <div class="card" style="margin-bottom: 32px;">
+      <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Start New Analysis</h3>
+
+      <div class="form-group">
+        <label>Select Difficulty</label>
+        <div class="difficulty-group">
+          <button class="btn active" id="btn-easy" onclick="setDifficulty('easy')">Easy</button>
+          <button class="btn" id="btn-medium" onclick="setDifficulty('medium')">Medium</button>
+          <button class="btn" id="btn-hard" onclick="setDifficulty('hard')">Hard</button>
         </div>
       </div>
 
-      <!-- Episode Control -->
-      <div class="control-group">
-        <h4>Episode</h4>
-        <button class="btn btn-primary btn-block" onclick="resetEnvironment()">Start New Episode</button>
-      </div>
-
-      <!-- Form Actions -->
-      <div class="control-group">
-        <h4>Submit Your Finding</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <button class="btn btn-primary" id="submitBtn" onclick="submitFinding()">Submit</button>
-          <button class="btn btn-secondary" id="autoFillBtn" onclick="autoFillForm()">Auto-Fill</button>
-        </div>
-      </div>
+      <button class="btn btn-primary btn-block" onclick="startEpisode()">Start Analyzing</button>
     </div>
 
-    <!-- MAIN CONTENT GRID -->
-    <div class="bento-grid">
-      <!-- LEFT: Form Input -->
-      <div class="bento-card">
-        <h3>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-          </svg>
-          Finding Details
-        </h3>
+    <!-- MAIN WORK AREA -->
+    <div class="grid-3">
+      <!-- LEFT: Form -->
+      <div class="card">
+        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Your Finding</h3>
 
         <div class="form-group">
           <label>Finding Type</label>
@@ -326,8 +262,7 @@ main { padding: 40px 0; }
 
         <div class="form-group">
           <label>Affected Element</label>
-          <input id="affected_element" type="text" placeholder="e.g., Flash Sale Banner" value="N/A">
-          <div class="autofill-hint" id="hint_element"></div>
+          <input id="affected_element" type="text" placeholder="e.g., Banner" value="N/A">
         </div>
 
         <div class="form-group">
@@ -345,7 +280,6 @@ main { padding: 40px 0; }
             <option value="search_no_results">Search No Results</option>
             <option value="high_bounce">High Bounce</option>
           </select>
-          <div class="autofill-hint" id="hint_category"></div>
         </div>
 
         <div class="form-group">
@@ -357,13 +291,11 @@ main { padding: 40px 0; }
             <option value="high">High</option>
             <option value="critical">Critical</option>
           </select>
-          <div class="autofill-hint" id="hint_severity"></div>
         </div>
 
         <div class="form-group">
           <label>Recommendation</label>
-          <textarea id="recommendation" placeholder="Specific fix to implement..."></textarea>
-          <div class="autofill-hint" id="hint_recommendation"></div>
+          <textarea id="recommendation" placeholder="What should be fixed?"></textarea>
         </div>
 
         <div class="form-group">
@@ -376,107 +308,75 @@ main { padding: 40px 0; }
             <option value="mobile_optimization">Mobile Optimization</option>
             <option value="performance_improvement">Performance Improvement</option>
           </select>
-          <div class="autofill-hint" id="hint_fix_category"></div>
         </div>
 
         <div class="form-group">
           <label>Impact Estimate</label>
-          <input id="impact_estimate" type="text" placeholder="e.g., 20-30% improvement in CTR">
-          <div class="autofill-hint" id="hint_impact"></div>
+          <input id="impact_estimate" type="text" placeholder="e.g., 20% improvement">
         </div>
 
         <div class="form-group">
-          <label>Confidence (0.0 - 1.0)</label>
+          <label>Confidence (0-1)</label>
           <input id="confidence" type="number" min="0" max="1" step="0.05" value="0.5">
         </div>
+
+        <button class="btn btn-primary btn-block" id="submitBtn" onclick="submitFinding()">Submit Finding</button>
       </div>
 
-      <!-- MIDDLE: Metrics & Status -->
-      <div>
-        <div class="bento-card">
-          <h3>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="2" x2="12" y2="22"></line>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-            Current Status
-          </h3>
+      <!-- MIDDLE: Status & Metrics -->
+      <div class="card">
+        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Episode Status</h3>
 
-          <div class="metrics-grid">
-            <div class="metric-box">
-              <div class="label">Step</div>
-              <div class="value" id="currentStep">0/1</div>
-            </div>
-            <div class="metric-box">
-              <div class="label">Reward</div>
-              <div class="value" id="stepReward">0.00</div>
-            </div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="label">Current Step</div>
+            <div class="value" id="currentStep">—</div>
           </div>
-
-          <div class="form-group" style="margin-bottom: 12px;">
-            <label>Active Page</label>
-            <input type="text" id="activePage" value="—" readonly style="background: var(--surface-2);">
+          <div class="metric">
+            <div class="label">Page</div>
+            <div class="value" style="font-size: 14px;" id="activePage">—</div>
           </div>
-
-          <div class="form-group">
-            <label>Total Score</label>
-            <input type="text" id="cumulativeScore" value="0.00" readonly style="background: var(--surface-2);">
+          <div class="metric">
+            <div class="label">Last Reward</div>
+            <div class="value" id="stepReward">—</div>
           </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Progress Visualization -->
-      <div>
-        <div class="bento-card">
-          <h3>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-            </svg>
-            Episode Progress
-          </h3>
-
-          <div class="step-timeline">
-            <div class="step-progress">
-              <div class="step-progress-bar">
-                <div class="step-progress-fill" id="progressFill" style="width: 0%;"></div>
-              </div>
-              <div class="step-counter" id="stepCounter">0%</div>
-            </div>
-
-            <div class="step-items" id="stepList">
-              <div style="text-align: center; color: var(--text); padding: 20px 0; font-size: 12px;">
-                Start an episode to see steps
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-            <div style="font-size: 12px; color: var(--text); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;">Score Trend</div>
-            <div class="chart-container">
-              <canvas id="scoreChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Feedback Section -->
-    <div id="feedbackSection" style="display: none;">
-      <div class="feedback-card">
-        <div class="feedback-badge" id="feedbackBadge">Pending</div>
-        <div class="feedback-text" id="feedbackText">Processing your finding...</div>
-        <div class="metrics-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-          <div class="metric-box">
-            <div class="label">This Step</div>
-            <div class="value" id="metricReward">0.00</div>
-          </div>
-          <div class="metric-box">
+          <div class="metric">
             <div class="label">Total Score</div>
-            <div class="value" id="metricTotal">0.00</div>
+            <div class="value" id="cumulativeScore">—</div>
           </div>
-          <div class="metric-box">
-            <div class="label">Status</div>
-            <div class="value" id="metricStatus">—</div>
+        </div>
+
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="font-size: 12px; color: var(--text); text-transform: uppercase; margin-bottom: 12px; font-weight: 600;">Feedback</div>
+          <div id="feedbackArea" style="font-size: 13px; color: var(--text-bright); line-height: 1.6; min-height: 40px;">
+            Start an episode to see feedback
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Progress -->
+      <div class="card">
+        <h3 style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Progress</h3>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Completion</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+          </div>
+          <div style="font-size: 12px; color: var(--text); text-align: right;" id="stepCounter">0%</div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">Score Trend</div>
+          <div class="chart-container">
+            <canvas id="scoreChart"></canvas>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="font-size: 11px; color: var(--text); text-transform: uppercase; margin-bottom: 10px; font-weight: 600;">Steps Completed</div>
+          <div class="step-history" id="stepHistory">
+            <div style="text-align: center; color: var(--text); padding: 20px 0; font-size: 12px;">No steps yet</div>
           </div>
         </div>
       </div>
@@ -484,29 +384,27 @@ main { padding: 40px 0; }
   </div>
 </main>
 
-<footer style="padding: 40px 0; border-top: 1px solid var(--border); text-align: center; font-size: 13px; color: var(--text);">
-  <p>UX Insight Analyst Environment · <a href="/web">Playground</a> · <a href="/documentation">Documentation</a> · <a href="/health">Health</a></p>
+<footer>
+  <p>UX Insight Analyst Environment · <a href="/web">Playground</a> · <a href="/documentation">Docs</a></p>
 </footer>
 
 <script>
 const API_BASE = '';
 let currentDifficulty = 'easy';
+let episodeActive = false;
 let episodeSteps = [];
 let rewardHistory = [];
 let scoreChart = null;
-let currentObservation = null;
 
 function setDifficulty(level) {
   currentDifficulty = level;
-  document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.difficulty-group .btn').forEach(b => b.classList.remove('active'));
   document.getElementById('btn-' + level).classList.add('active');
 }
 
-async function resetEnvironment() {
+async function startEpisode() {
   try {
-    document.getElementById('submitBtn').disabled = true;
-    episodeSteps = [];
-    rewardHistory = [];
+    console.log('Starting episode with difficulty:', currentDifficulty);
 
     const response = await fetch(`${API_BASE}/reset`, {
       method: 'POST',
@@ -514,21 +412,33 @@ async function resetEnvironment() {
       body: JSON.stringify({ task_id: currentDifficulty })
     });
 
+    if (!response.ok) throw new Error('Reset failed: ' + response.status);
+
     const data = await response.json();
-    currentObservation = data.observation || {};
-    updateMetrics(data);
+    console.log('Reset response:', data);
+
+    episodeActive = true;
+    episodeSteps = [];
+    rewardHistory = [];
+
+    updateDisplay(data);
     clearForm();
-    updateStepList();
     updateChart();
-    document.getElementById('feedbackSection').style.display = 'none';
-  } catch (e) {
-    showError('Failed to reset: ' + e.message);
-  } finally {
     document.getElementById('submitBtn').disabled = false;
+
+  } catch (e) {
+    console.error('Error starting episode:', e);
+    showStatus('error', 'Failed to start: ' + e.message);
+    document.getElementById('submitBtn').disabled = true;
   }
 }
 
 async function submitFinding() {
+  if (!episodeActive) {
+    showStatus('error', 'Start an episode first');
+    return;
+  }
+
   try {
     document.getElementById('submitBtn').disabled = true;
 
@@ -543,113 +453,85 @@ async function submitFinding() {
       confidence: parseFloat(document.getElementById('confidence').value) || 0.5
     };
 
+    console.log('Submitting finding:', finding);
+
     const response = await fetch(`${API_BASE}/step`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(finding)
     });
 
+    if (!response.ok) throw new Error('Step failed: ' + response.status);
+
     const data = await response.json();
-    currentObservation = data.observation || {};
+    console.log('Step response:', data);
 
     const reward = data.reward || 0;
     rewardHistory.push(reward);
-
     episodeSteps.push({
-      step: (currentObservation.current_step || 0),
+      step: data.observation?.current_step || episodeSteps.length + 1,
       reward: reward,
-      finding: finding
+      category: finding.issue_category
     });
 
-    updateMetrics(data);
-    updateStepList();
+    updateDisplay(data);
     updateChart();
-    showFeedback(data);
     clearForm();
 
     if (data.done) {
+      episodeActive = false;
       document.getElementById('submitBtn').disabled = true;
+      showStatus('success', 'Episode complete!');
     }
+
   } catch (e) {
-    showError('Failed to submit: ' + e.message);
+    console.error('Error submitting:', e);
+    showStatus('error', 'Failed to submit: ' + e.message);
   } finally {
     document.getElementById('submitBtn').disabled = false;
   }
 }
 
-async function autoFillForm() {
-  try {
-    if (!currentObservation || !currentObservation.current_page_data) {
-      showError('Reset environment first to get suggestions');
-      return;
-    }
-
-    const pageData = currentObservation.current_page_data;
-    showHint('element', 'Expected: ' + (pageData.page_name || 'Banner element'));
-    showHint('category', 'Hint: Check for behavioral patterns');
-    showHint('severity', 'Hint: Analyze impact on user journey');
-    showHint('recommendation', 'Hint: Recommend specific element changes');
-    showHint('fix_category', 'Hint: Match recommended fix type');
-    showHint('impact', 'Hint: Quantify expected improvement');
-  } catch (e) {
-    showError('Failed to get suggestions: ' + e.message);
-  }
-}
-
-function showHint(field, text) {
-  const hintEl = document.getElementById(`hint_${field}`);
-  if (hintEl) {
-    hintEl.textContent = text;
-    hintEl.classList.add('show');
-    setTimeout(() => hintEl.classList.remove('show'), 5000);
-  }
-}
-
-function updateMetrics(data) {
+function updateDisplay(data) {
   const obs = data.observation || {};
   const reward = data.reward || 0;
-  const total = obs.cumulative_score || 0;
+  const done = data.done || false;
 
   document.getElementById('currentStep').value = `${obs.current_step || 0}/${obs.total_steps || 1}`;
   document.getElementById('activePage').value = obs.current_page_data?.page_name || '—';
   document.getElementById('stepReward').value = reward.toFixed(2);
-  document.getElementById('cumulativeScore').value = total.toFixed(2);
+  document.getElementById('cumulativeScore').value = (obs.cumulative_score || 0).toFixed(2);
+  document.getElementById('feedbackArea').textContent = obs.grader_feedback || 'No feedback';
 
+  // Progress
   if (obs.total_steps) {
     const pct = (obs.current_step / obs.total_steps) * 100;
     document.getElementById('progressFill').style.width = pct + '%';
     document.getElementById('stepCounter').textContent = Math.round(pct) + '%';
   }
+
+  // Show step history
+  renderSteps();
+
+  // Status message
+  if (reward > 0.5) showStatus('success', 'Strong response!');
+  else if (reward > 0) showStatus('warning', 'Partial credit');
+  else if (reward >= 0) showStatus('error', 'Below target');
 }
 
-function updateStepList() {
-  const list = document.getElementById('stepList');
-
-  if (episodeSteps.length === 0) {
-    list.innerHTML = '<div style="text-align: center; color: var(--text); padding: 20px 0; font-size: 12px;">Start an episode to see steps</div>';
-    return;
-  }
-
-  list.innerHTML = episodeSteps.map((step, idx) => {
-    let statusClass = 'error';
-    if (step.reward > 0.5) statusClass = 'success';
-    else if (step.reward > 0) statusClass = 'warning';
-
-    return `
-      <div class="step-item ${statusClass}">
-        <span class="step-num">${step.step}</span>
-        <span style="flex: 1; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-          ${step.finding.issue_category}
-        </span>
-        <span class="step-reward">${step.reward.toFixed(2)}</span>
-      </div>
-    `;
+function renderSteps() {
+  const html = episodeSteps.map((s, i) => {
+    let cls = 'error';
+    if (s.reward > 0.5) cls = 'success';
+    else if (s.reward > 0) cls = 'warning';
+    return `<div class="step-item ${cls}"><span>S${s.step}: ${s.category}</span><strong>${s.reward.toFixed(2)}</strong></div>`;
   }).join('');
+
+  document.getElementById('stepHistory').innerHTML = html || '<div style="text-align: center; color: var(--text); padding: 20px 0; font-size: 12px;">No steps yet</div>';
 }
 
 function updateChart() {
   const ctx = document.getElementById('scoreChart').getContext('2d');
-
   if (scoreChart) scoreChart.destroy();
 
   const cumulative = rewardHistory.reduce((acc, r, i) => [...acc, (acc[i-1] || 0) + r], []);
@@ -657,77 +539,33 @@ function updateChart() {
   scoreChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: rewardHistory.map((_, i) => 'S' + (i+1)),
-      datasets: [
-        {
-          label: 'Cumulative Score',
-          data: cumulative,
-          borderColor: '#fff',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          borderWidth: 2,
-          tension: 0.4,
-          fill: true,
-          pointBackgroundColor: '#fff',
-          pointBorderColor: 'transparent',
-          pointRadius: 3,
-          pointHoverRadius: 5
-        }
-      ]
+      labels: cumulative.map((_, i) => i + 1),
+      datasets: [{
+        data: cumulative,
+        borderColor: '#fff',
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true,
+        pointRadius: 3
+      }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      plugins: { legend: { display: false } },
       scales: {
-        y: {
-          min: 0,
-          max: 1,
-          grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
-          ticks: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 11 } }
-        },
-        x: {
-          grid: { display: false, drawBorder: false },
-          ticks: { color: 'rgba(255, 255, 255, 0.5)', font: { size: 11 } }
-        }
+        y: { min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)' } },
+        x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)' } }
       }
     }
   });
 }
 
-function showFeedback(data) {
-  const reward = data.reward || 0;
-  const done = data.done || false;
-  const obs = data.observation || {};
-  const feedback = obs.grader_feedback || 'Feedback pending';
-
-  let badgeClass = 'error';
-  let badgeText = 'Below Target';
-  if (reward > 0.5) {
-    badgeClass = 'success';
-    badgeText = 'Strong';
-  } else if (reward > 0) {
-    badgeClass = 'warning';
-    badgeText = 'Partial';
-  }
-
-  document.getElementById('feedbackBadge').className = 'feedback-badge ' + badgeClass;
-  document.getElementById('feedbackBadge').textContent = badgeText;
-  document.getElementById('feedbackText').textContent = feedback;
-  document.getElementById('metricReward').textContent = reward.toFixed(2);
-  document.getElementById('metricTotal').textContent = (obs.cumulative_score || 0).toFixed(2);
-  document.getElementById('metricStatus').textContent = done ? 'Complete' : 'Active';
-
-  document.getElementById('feedbackSection').style.display = 'block';
-  document.getElementById('feedbackSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function showError(msg) {
-  document.getElementById('feedbackSection').style.display = 'block';
-  document.getElementById('feedbackBadge').className = 'feedback-badge error';
-  document.getElementById('feedbackBadge').textContent = 'Error';
-  document.getElementById('feedbackText').textContent = msg;
+function showStatus(type, msg) {
+  const el = document.getElementById('feedbackArea');
+  const color = type === 'success' ? 'var(--success)' : type === 'warning' ? 'var(--warning)' : 'var(--error)';
+  el.innerHTML = `<span style="color: ${color};">${msg}</span>`;
 }
 
 function clearForm() {
@@ -739,12 +577,10 @@ function clearForm() {
   document.getElementById('fix_category').value = 'no_fix_needed';
   document.getElementById('impact_estimate').value = '';
   document.getElementById('confidence').value = '0.5';
-
-  document.querySelectorAll('.autofill-hint').forEach(h => h.classList.remove('show'));
 }
 
-// Initialize on load
-window.addEventListener('load', resetEnvironment);
+// Initialize
+document.getElementById('submitBtn').disabled = true;
 </script>
 
 </body>
