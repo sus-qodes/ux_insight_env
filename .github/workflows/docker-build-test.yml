@@ -1,0 +1,82 @@
+name: Docker Build Test
+
+on:
+  push:
+    branches:
+      - develop
+      - feature/**
+    paths:
+      - 'Dockerfile'
+      - 'server/requirements.txt'
+      - '.github/workflows/docker-build-test.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile'
+      - 'server/**'
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: ux-insight-env:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Docker image for testing
+        run: |
+          docker build -t ux-insight-env:test .
+
+      - name: Test Docker image startup
+        run: |
+          # Start container
+          docker run -d -p 7860:7860 --name ux-insight-test ux-insight-env:test
+
+          # Wait for service to be ready
+          sleep 5
+
+          # Test health endpoint
+          echo "Testing health endpoint..."
+          if curl -f http://localhost:7860/health; then
+            echo "✅ Health check PASSED"
+          else
+            echo "❌ Health check FAILED"
+            docker logs ux-insight-test
+            exit 1
+          fi
+
+          # Test reset endpoint
+          echo "Testing reset endpoint..."
+          if curl -X POST http://localhost:7860/reset \
+            -H "Content-Type: application/json" \
+            -d '{"task_id":"easy"}' | grep -q "task_id"; then
+            echo "✅ Reset endpoint PASSED"
+          else
+            echo "❌ Reset endpoint FAILED"
+            docker logs ux-insight-test
+            exit 1
+          fi
+
+          # Cleanup
+          docker stop ux-insight-test
+          docker rm ux-insight-test
+
+      - name: Docker build and test successful
+        run: |
+          echo "✅ Docker image built and tested successfully"
+          echo "✅ Health endpoint: /health"
+          echo "✅ Reset endpoint: /reset"

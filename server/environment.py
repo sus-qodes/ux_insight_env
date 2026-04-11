@@ -14,9 +14,11 @@ from openenv.core.env_server import Environment
 try:
     from .data_generator import generate_episode_data
     from .grader import grade_step, compute_step_reward, grade_episode, generate_grader_feedback
+    from .rubrics import UXAnalystRubric
 except ImportError:
     from server.data_generator import generate_episode_data
     from server.grader import grade_step, compute_step_reward, grade_episode, generate_grader_feedback
+    from server.rubrics import UXAnalystRubric
 
 import random
 from typing import Any, Optional
@@ -54,7 +56,7 @@ class UXInsightEnvironment(Environment):
     at an e-commerce company reviewing behavioral analytics data.
     """
 
-    def __init__(self):
+    def __init__(self, rubric=None):
         self._pages_data: list = []
         self._embedded_problems: list = []
         self._current_step: int = 0
@@ -63,6 +65,8 @@ class UXInsightEnvironment(Environment):
         self._findings: list = []
         self._episode_rewards: list = []
         self._is_done: bool = False
+        # RFC 004: Rubric for RL training framework integration
+        self.rubric = rubric or UXAnalystRubric()
 
     # ------------------------------------------------------------------
     # reset()
