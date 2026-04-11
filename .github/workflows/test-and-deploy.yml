@@ -128,7 +128,7 @@ jobs:
 
       - name: Configure HuggingFace credentials
         run: |
-          hf auth login --token ${{ secrets.HF_TOKEN }} --add-to-git-credentials
+          hf auth login --token ${{ secrets.HF_TOKEN }} --add-to-git-credential
 
       - name: Push to HuggingFace Space
         run: |
