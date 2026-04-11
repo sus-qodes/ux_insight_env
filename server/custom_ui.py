@@ -43,154 +43,118 @@ ux_theme = gr.themes.Base(
 )
 
 css = """
-* { font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif !important; }
+/* ===== CUSTOM UI CSS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
-/* ===== MICRO-ANIMATIONS ===== */
-@keyframes slideInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+* { 
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important; 
 }
 
-@keyframes scaleIn {
-    from { transform: scale(0.95); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+h1, h2, h3, h4, h5, h6, .bold-heading { 
+    font-family: 'Outfit', system-ui, sans-serif !important; 
+    font-weight: 700 !important; 
+    letter-spacing: -0.02em;
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+#page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(90deg, #ffffff, #a1a1aa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+/* ===== MODULAR LAYOUT ===== */
+.main-container {
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.bento-card {
+    background: rgba(17, 17, 19, 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid #27272a !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    margin-bottom: 24px;
+}
+
+.bento-card-side {
+    margin-bottom: 16px;
+}
+
+.bento-card:hover {
+    border-color: #3f3f46 !important;
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1);
+}
+
+.bold-heading {
+    margin: 0 0 20px 0 !important;
+    color: #ffffff !important;
+    font-size: 1.25rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #27272a;
+    padding-bottom: 12px;
 }
 
 /* ===== INTERACTIVE ELEMENTS ===== */
 button, [role="button"] {
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
 }
 
 button:hover:not(:disabled) {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.15) !important;
 }
 
 button:active:not(:disabled) {
     transform: translateY(0) !important;
 }
 
-button:disabled {
-    opacity: 0.5 !important;
-    cursor: not-allowed !important;
-}
-
-/* ===== BENTO GRID LAYOUT ===== */
-.bento-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 2fr;
-    gap: 16px;
-    margin-bottom: 32px;
-}
-
-.bento-card {
-    background: #111113;
-    border: 1px solid #27272a;
-    border-radius: 12px;
-    padding: 20px;
-    animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bento-card:hover {
-    border-color: #3f3f46;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
-}
-
-.bento-card h3 {
-    margin: 0 0 16px 0;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Card size variants */
-.bento-form { grid-column: span 1; }
-.bento-difficulty { grid-column: span 1; }
-.bento-metrics { grid-column: span 1; }
-
-/* Second row */
-.bento-progress { grid-column: span 1; }
-.bento-page-status { grid-column: span 1; }
-.bento-chart { grid-column: span 1; }
-
-/* ===== DIFFICULTY SELECTOR ===== */
-.difficulty-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.difficulty-btn {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1.5px solid #27272a;
-    background: #18181b;
-    color: #a1a1aa;
-    font-weight: 500;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.difficulty-btn:hover:not(.selected) {
-    border-color: #8b5cf6;
-    background: #1e1e23;
-}
-
-.difficulty-btn.selected {
-    background: #ffffff !important;
-    color: #09090b !important;
-    border-color: #ffffff !important;
+.primary-btn {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9) !important;
+    border: none !important;
+    color: white !important;
     box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
 }
 
-/* ===== METRICS ===== */
-.metric-value {
-    font-size: 32px;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 8px 0;
+.primary-btn:hover {
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.5) !important;
 }
 
-.metric-label {
-    font-size: 12px;
+.empty-state {
+    padding: 24px;
     color: #a1a1aa;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-/* ===== PROGRESS BAR ===== */
-.progress-bar-bg {
-    width: 100%;
-    height: 8px;
+    text-align: center;
     background: #18181b;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid #27272a;
-    margin-top: 12px;
+    border-radius: 8px;
+    border: 1px dashed #3f3f46;
+    font-style: italic;
 }
 
-.progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
-    width: var(--progress-pct, 0%);
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+/* ===== OVERRIDES FOR GRADIO INPUTS ===== */
+input, textarea, .dropdown {
+    background: #18181b !important;
+    border-color: #27272a !important;
+    transition: border-color 0.2s !important;
 }
 
-/* ===== FEEDBACK ===== */
+input:focus, textarea:focus {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2) !important;
+}
+
+/* Base Animations */
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .feedback-card {
     background: #2e1065;
     border-left: 4px solid #8b5cf6;
@@ -198,26 +162,6 @@ button:disabled {
     border-radius: 8px;
     margin-bottom: 16px;
     animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-    .bento-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .bento-form, .bento-metrics, .bento-chart {
-        grid-column: span 1;
-    }
-}
-
-@media (max-width: 640px) {
-    .bento-grid {
-        grid-template-columns: 1fr;
-    }
-    .bento-form, .bento-difficulty, .bento-metrics,
-    .bento-progress, .bento-page-status, .bento-chart {
-        grid-column: span 1;
-    }
 }
 """
 
@@ -373,11 +317,10 @@ def custom_gradio_builder(
     with gr.Blocks(title=display_title, theme=ux_theme, css=css) as demo:
         gr.Markdown(f"# {title}", elem_id="page-title")
 
-        # Bento Grid
-        with gr.Group(elem_classes="bento-grid"):
-            # Card 1: Form
-            with gr.Group(elem_classes="bento-card bento-form"):
-                gr.Markdown("### Find Issue")
+        with gr.Row(elem_classes="main-container"):
+            # LEFT COLUMN: Form and Actions
+            with gr.Column(scale=2, min_width=400, elem_classes="bento-card"):
+                gr.Markdown("### 🔍 Find Issue", elem_classes="bold-heading")
 
                 default_scenario = [
                     "no_issue", "N/A", "normal_behavior", "none",
@@ -407,53 +350,40 @@ def custom_gradio_builder(
                         inp = gr.Textbox(label=label, placeholder=placeholder, value=default_val)
                     step_inputs.append(inp)
 
-            # Card 2: Difficulty
-            with gr.Group(elem_classes="bento-card bento-difficulty"):
-                gr.Markdown("### Difficulty")
+                gr.Markdown("---")
+                with gr.Row():
+                    submit_btn = gr.Button("Submit Finding", variant="primary", size="lg", elem_classes="primary-btn")
+                    auto_fill_btn = gr.Button("Auto-Fill", variant="secondary")
 
-                difficulty_easy_btn = gr.Button("Easy\n1 page", variant="secondary")
-                difficulty_med_btn = gr.Button("Medium\n3 pages", variant="secondary")
-                difficulty_hard_btn = gr.Button("Hard\n6 pages", variant="secondary")
+            # RIGHT COLUMN: Stats & Controls
+            with gr.Column(scale=1, min_width=300):
+                with gr.Group(elem_classes="bento-card bento-card-side"):
+                    gr.Markdown("### ⚙️ Environment Control", elem_classes="bold-heading")
+                    with gr.Row():
+                        difficulty_easy_btn = gr.Button("Easy", variant="secondary")
+                        difficulty_med_btn = gr.Button("Medium", variant="secondary")
+                        difficulty_hard_btn = gr.Button("Hard", variant="secondary")
+                    reset_btn = gr.Button("Reset Environment", variant="secondary")
 
-            # Card 3: Metrics
-            with gr.Group(elem_classes="bento-card bento-metrics"):
-                gr.Markdown("### Metrics")
-
-                step_reward = gr.Number(value=0.0, interactive=False, label="Reward")
-                cumulative = gr.Number(value=0.0, interactive=False, label="Cumulative")
-                episode_text = gr.Textbox(value="0/0", interactive=False, label="Step")
-
-            # Card 4: Progress
-            with gr.Group(elem_classes="bento-card bento-progress"):
-                gr.Markdown("### Progress")
-                progress_step_text = gr.Textbox(value="Step 0", interactive=False, label="", show_label=False)
-                progress_bar_html = gr.HTML('<div class="progress-bar-bg"><div class="progress-bar-fill"></div></div>')
-
-            # Card 5: Current Page
-            with gr.Group(elem_classes="bento-card bento-page-status"):
-                gr.Markdown("### Page")
-                page_name = gr.Textbox(value="—", interactive=False, label="", show_label=False)
-
-            # Card 6: Placeholder for future
-            with gr.Group(elem_classes="bento-card bento-chart"):
-                gr.Markdown("### Status")
-                status_text = gr.Textbox(value="Ready to start", interactive=False, label="", show_label=False)
-
-        # Action buttons
-        with gr.Row():
-            submit_btn = gr.Button("Submit Finding", variant="primary", size="lg")
-            auto_fill_btn = gr.Button("Auto-Fill", variant="secondary")
-            reset_btn = gr.Button("Reset", variant="secondary")
+                with gr.Group(elem_classes="bento-card bento-card-side"):
+                    gr.Markdown("### 📊 Metrics & Status", elem_classes="bold-heading")
+                    with gr.Row():
+                        step_reward = gr.Number(value=0.0, interactive=False, label="Reward")
+                        cumulative = gr.Number(value=0.0, interactive=False, label="Cumulative")
+                    with gr.Row():
+                        episode_text = gr.Textbox(value="0/0", interactive=False, label="Step")
+                        page_name = gr.Textbox(value="—", interactive=False, label="Active Page")
+                    status_text = gr.Textbox(value="Ready to start", interactive=False, label="Status")
 
         # Result display
-        with gr.Group():
-            result_html = gr.HTML('<div style="padding: 16px; color: #a1a1aa; text-align: center;">Submit a finding to see results</div>')
-            result_json = gr.Code(value="", language="json", interactive=False)
+        with gr.Group(elem_classes="bento-card"):
+            gr.Markdown("### 📝 Latest Feedback", elem_classes="bold-heading")
+            result_html = gr.HTML('<div class="empty-state">Submit a finding to see results</div>')
+            result_json = gr.Code(value="", language="json", interactive=False, visible=False)
 
         # README full width
-        with gr.Group():
-            gr.Markdown("---")
-            gr.Markdown("## Setup & Documentation")
+        with gr.Group(elem_classes="bento-card"):
+            gr.Markdown("## Setup & Documentation", elem_classes="bold-heading")
             gr.Markdown(readme_content)
 
         # Callbacks
