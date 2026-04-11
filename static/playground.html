@@ -42,12 +42,102 @@ nav .links a:hover { color: var(--white); }
 main { padding: 40px 0; }
 
 /* Page header */
-.page-header { margin-bottom: 40px; }
+.page-header { margin-bottom: 32px; }
 .page-header h1 { font-size: 32px; margin-bottom: 8px; color: var(--white); }
 .page-header p { color: var(--text); font-size: 14px; }
 
+/* Control Panel (Top) */
+.control-panel {
+  background: linear-gradient(135deg, rgb(17, 17, 19) 0%, rgb(15, 15, 18) 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.control-group h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text); margin-bottom: 12px; font-weight: 600; }
+.control-group { display: flex; flex-direction: column; gap: 10px; }
+
+/* Unified Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-bright);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  color: var(--white);
+  background: var(--surface);
+  border-color: #3f3f46;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--white);
+  color: var(--bg);
+  border-color: var(--white);
+  font-weight: 700;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--text-bright);
+  color: var(--bg);
+  border-color: var(--text-bright);
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--text-bright);
+}
+
+/* Difficulty buttons group */
+.btn-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.btn-group .btn {
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+.btn-group .btn.active {
+  background: var(--white);
+  color: var(--bg);
+  border-color: var(--white);
+  font-weight: 700;
+}
+
+.btn-block { width: 100%; }
+
 /* Bento Grid */
-.bento-grid { display: grid; grid-template-columns: 2.5fr 1.5fr 1fr; gap: 24px; margin-bottom: 24px; }
+.bento-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
 @media (max-width: 1024px) { .bento-grid { grid-template-columns: 1fr 1fr; } }
 
 /* Bento cards */
@@ -82,24 +172,6 @@ main { padding: 40px 0; }
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
 }
 .form-group textarea { resize: vertical; min-height: 70px; font-family: var(--sans); }
-
-/* Buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 16px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; border: 1px solid var(--border); background: transparent; color: var(--text-bright); cursor: pointer; border-radius: 6px; transition: all 0.2s; }
-.btn:hover { color: var(--white); background: var(--surface-2); border-color: #3f3f46; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.btn-primary { background: var(--white); color: var(--bg); border-color: var(--white); font-weight: 700; }
-.btn-primary:hover { background: var(--text-bright); color: var(--bg); border-color: var(--text-bright); }
-.btn-primary:active { transform: scale(0.98); }
-
-.btn-small { padding: 8px 12px; font-size: 12px; }
-.btn-block { width: 100%; }
-
-/* Difficulty selector */
-.difficulty-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-.difficulty-btn { padding: 12px; text-align: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-.difficulty-btn:hover { border-color: #3f3f46; }
-.difficulty-btn.active { background: var(--white); color: var(--bg); border-color: var(--white); }
 
 /* Metrics grid */
 .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
@@ -160,15 +232,17 @@ main { padding: 40px 0; }
 .autofill-hint { background: var(--surface-2); border-left: 3px solid var(--border); padding: 10px 12px; border-radius: 4px; font-size: 12px; color: var(--text); margin-top: 4px; display: none; }
 .autofill-hint.show { display: block; animation: slideIn 0.2s ease-out; }
 
-/* Loading spinner */
-.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--white); border-radius: 50%; animation: spin 0.6s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .control-panel { grid-template-columns: 1fr; }
   .bento-grid { grid-template-columns: 1fr; }
   .metrics-grid { grid-template-columns: 1fr; }
-  .difficulty-selector { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .control-panel { grid-template-columns: 1fr; }
+  .bento-grid { grid-template-columns: 1fr; }
+  .metrics-grid { grid-template-columns: 1fr; }
   .page-header h1 { font-size: 24px; }
 }
 
@@ -202,6 +276,35 @@ main { padding: 40px 0; }
       <p>Analyze UX issues in real-time. Select difficulty, submit findings, and watch your score evolve.</p>
     </div>
 
+    <!-- UNIFIED CONTROL PANEL -->
+    <div class="control-panel">
+      <!-- Difficulty Selection -->
+      <div class="control-group">
+        <h4>Select Difficulty</h4>
+        <div class="btn-group">
+          <button class="btn btn-secondary active" id="btn-easy" onclick="setDifficulty('easy')">Easy</button>
+          <button class="btn btn-secondary" id="btn-medium" onclick="setDifficulty('medium')">Medium</button>
+          <button class="btn btn-secondary" id="btn-hard" onclick="setDifficulty('hard')">Hard</button>
+        </div>
+      </div>
+
+      <!-- Episode Control -->
+      <div class="control-group">
+        <h4>Episode</h4>
+        <button class="btn btn-primary btn-block" onclick="resetEnvironment()">Start New Episode</button>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="control-group">
+        <h4>Submit Your Finding</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button class="btn btn-primary" id="submitBtn" onclick="submitFinding()">Submit</button>
+          <button class="btn btn-secondary" id="autoFillBtn" onclick="autoFillForm()">Auto-Fill</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT GRID -->
     <div class="bento-grid">
       <!-- LEFT: Form Input -->
       <div class="bento-card">
@@ -210,7 +313,7 @@ main { padding: 40px 0; }
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
           </svg>
-          Submit Finding
+          Finding Details
         </h3>
 
         <div class="form-group">
@@ -286,34 +389,10 @@ main { padding: 40px 0; }
           <label>Confidence (0.0 - 1.0)</label>
           <input id="confidence" type="number" min="0" max="1" step="0.05" value="0.5">
         </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-          <button class="btn btn-primary" id="submitBtn" onclick="submitFinding()">Submit</button>
-          <button class="btn" id="autoFillBtn" onclick="autoFillForm()">Auto-Fill</button>
-        </div>
       </div>
 
-      <!-- MIDDLE: Metrics & Control -->
+      <!-- MIDDLE: Metrics & Status -->
       <div>
-        <!-- Difficulty Control -->
-        <div class="bento-card" style="margin-bottom: 24px;">
-          <h3>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="1"></circle>
-              <circle cx="19" cy="12" r="1"></circle>
-              <circle cx="5" cy="12" r="1"></circle>
-            </svg>
-            Difficulty Level
-          </h3>
-          <div class="difficulty-selector">
-            <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy</button>
-            <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium</button>
-            <button class="difficulty-btn" onclick="setDifficulty('hard')">Hard</button>
-          </div>
-          <button class="btn btn-primary btn-block" onclick="resetEnvironment()">Start New Episode</button>
-        </div>
-
-        <!-- Current Metrics -->
         <div class="bento-card">
           <h3>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -348,7 +427,6 @@ main { padding: 40px 0; }
 
       <!-- RIGHT: Progress Visualization -->
       <div>
-        <!-- Progress -->
         <div class="bento-card">
           <h3>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -418,17 +496,10 @@ let rewardHistory = [];
 let scoreChart = null;
 let currentObservation = null;
 
-// SVG Icons
-const icons = {
-  success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>',
-  warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>',
-  error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'
-};
-
 function setDifficulty(level) {
   currentDifficulty = level;
-  document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('btn-' + level).classList.add('active');
 }
 
 async function resetEnvironment() {
@@ -484,7 +555,6 @@ async function submitFinding() {
     const reward = data.reward || 0;
     rewardHistory.push(reward);
 
-    // Add to step list
     episodeSteps.push({
       step: (currentObservation.current_step || 0),
       reward: reward,
@@ -509,13 +579,11 @@ async function submitFinding() {
 
 async function autoFillForm() {
   try {
-    // Simulate getting ground truth from current observation
     if (!currentObservation || !currentObservation.current_page_data) {
       showError('Reset environment first to get suggestions');
       return;
     }
 
-    // Show hints from ground truth
     const pageData = currentObservation.current_page_data;
     showHint('element', 'Expected: ' + (pageData.page_name || 'Banner element'));
     showHint('category', 'Hint: Check for behavioral patterns');
@@ -547,7 +615,6 @@ function updateMetrics(data) {
   document.getElementById('stepReward').value = reward.toFixed(2);
   document.getElementById('cumulativeScore').value = total.toFixed(2);
 
-  // Update progress bar
   if (obs.total_steps) {
     const pct = (obs.current_step / obs.total_steps) * 100;
     document.getElementById('progressFill').style.width = pct + '%';
