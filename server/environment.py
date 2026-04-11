@@ -94,6 +94,37 @@ class UXInsightEnvironment(Environment):
             task_id=self._task_id,
         )
 
+        # Extract ground truth for first page
+        ground_truth_dict = None
+        if self._pages_data:
+            current_page = self._pages_data[0].page_name
+            problems = [p for p in self._embedded_problems
+                       if p.get("affected_page") == current_page and not p.get("red_herring")]
+
+            if problems:
+                p = problems[0]
+                ground_truth_dict = {
+                    "finding_type": "issue",
+                    "affected_element": p.get("affected_element", "Unknown Element"),
+                    "issue_category": p.get("problem_type", "normal_behavior"),
+                    "severity": p.get("severity", "medium"),
+                    "recommendation": p.get("expected_fix_description", "Improve user experience"),
+                    "fix_category": p.get("expected_fix_category", "redesign_element"),
+                    "impact_estimate": p.get("expected_impact_estimate", "Expected positive impact"),
+                    "confidence": 0.95
+                }
+            else:
+                ground_truth_dict = {
+                    "finding_type": "no_issue",
+                    "affected_element": "N/A",
+                    "issue_category": "normal_behavior",
+                    "severity": "none",
+                    "recommendation": "No fix required",
+                    "fix_category": "no_fix_needed",
+                    "impact_estimate": "Normal engagement metrics",
+                    "confidence": 0.95
+                }
+
         return UXObservation(
             task_id=self._task_id,
             task_description=TASK_DESCRIPTIONS[self._task_id],
@@ -110,6 +141,7 @@ class UXInsightEnvironment(Environment):
                 "total_app_sessions": sum(p.total_sessions for p in self._pages_data),
                 "primary_device": "Mobile (67% of traffic)",
             },
+            ground_truth=ground_truth_dict,
             done=False,
             reward=None,
         )
