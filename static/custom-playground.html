@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playground</title>
+    <title>Interactive Playground</title>
     <link rel="stylesheet" href="/static/css/navbar.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -43,7 +43,74 @@
             letter-spacing: 0.05em;
         }
 
-        /* Two-column layout */
+        /* Welcome screen */
+        .welcome-screen {
+            display: none;
+            text-align: center;
+            padding: 60px 40px;
+            border: 1px solid #27272a;
+            background-color: #111113;
+            margin-bottom: 32px;
+        }
+
+        .welcome-screen.active {
+            display: block;
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #fafafa;
+            margin-bottom: 16px;
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            color: #a1a1aa;
+            margin-bottom: 32px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .steps-list {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 40px;
+            border: 1px solid #27272a;
+            padding: 24px;
+            background-color: #09090b;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #a1a1aa;
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background-color: #27272a;
+            color: #fafafa;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 11px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        /* Main grid */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -56,6 +123,16 @@
             background-color: #111113;
             display: flex;
             flex-direction: column;
+        }
+
+        .panel.highlighted {
+            border-color: #fafafa;
+            box-shadow: 0 0 0 1px #fafafa;
+        }
+
+        .panel.disabled {
+            opacity: 0.5;
+            pointer-events: none;
         }
 
         .panel-header {
@@ -78,6 +155,174 @@
             overflow-y: auto;
         }
 
+        /* Guidance message */
+        .guidance-box {
+            background-color: #09090b;
+            border: 1px solid #27272a;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #fafafa;
+            border-radius: 2px;
+        }
+
+        .guidance-icon {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background-color: #fafafa;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        /* Info button and tooltip */
+        .info-btn {
+            display: inline-flex;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #a1a1aa;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #a1a1aa;
+            cursor: help;
+            margin-left: 6px;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.15s;
+        }
+
+        .info-btn:hover {
+            border-color: #fafafa;
+            color: #fafafa;
+            background-color: #27272a;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1a1a1d;
+            color: #d4d4d8;
+            text-align: left;
+            padding: 8px 12px;
+            border-radius: 2px;
+            border: 1px solid #27272a;
+            z-index: 2000;
+            white-space: nowrap;
+            font-size: 11px;
+            font-weight: normal;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .tooltip.multiline {
+            white-space: normal;
+            max-width: 280px;
+            width: 280px;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: #1a1a1d;
+        }
+
+        .info-btn:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .label-with-info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Step progress */
+        .step-progress-container {
+            border: 1px solid #27272a;
+            background-color: #111113;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .step-progress {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .step-node {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #27272a;
+            background-color: #09090b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #a1a1aa;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .step-node.active {
+            background-color: #fafafa;
+            color: #09090b;
+            border-color: #fafafa;
+            animation: pulse-step 0.5s ease-out;
+        }
+
+        .step-node.completed {
+            background-color: #111113;
+            border-color: #a1a1aa;
+            color: #fafafa;
+        }
+
+        @keyframes pulse-step {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            padding-top: 12px;
+            border-top: 1px solid #27272a;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #a1a1aa;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            color: #fafafa;
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        /* Form styling */
         .form-group {
             margin-bottom: 16px;
         }
@@ -105,11 +350,17 @@
             font-family: monospace;
             font-size: 12px;
             transition: border-color 0.15s;
+            border-radius: 2px;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #a1a1aa;
+        }
+
+        input:disabled, select:disabled, textarea:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         textarea {
@@ -118,26 +369,11 @@
             font-family: monospace;
         }
 
-        /* Data display */
-        .data-section {
-            margin-bottom: 20px;
-        }
-
-        .data-section h4 {
-            font-size: 11px;
-            font-weight: 600;
-            color: #fafafa;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #27272a;
-        }
-
+        /* Analytics display */
         .metric-item {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 8px 0;
             font-size: 12px;
             border-bottom: 1px solid #27272a;
         }
@@ -154,6 +390,21 @@
             color: #fafafa;
             font-family: monospace;
             font-weight: 500;
+        }
+
+        .data-section {
+            margin-bottom: 20px;
+        }
+
+        .data-section h4 {
+            font-size: 11px;
+            font-weight: 600;
+            color: #fafafa;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #27272a;
         }
 
         .signal-item {
@@ -177,6 +428,7 @@
             margin-top: 2px;
         }
 
+        /* Buttons */
         .button {
             padding: 8px 16px;
             background-color: #fafafa;
@@ -189,9 +441,10 @@
             cursor: pointer;
             transition: background-color 0.15s;
             width: 100%;
+            border-radius: 2px;
         }
 
-        .button:hover {
+        .button:hover:not(:disabled) {
             background-color: #d4d4d8;
         }
 
@@ -201,110 +454,12 @@
             cursor: not-allowed;
         }
 
-        .button-secondary {
-            padding: 8px 16px;
-            background-color: #111113;
-            color: #d4d4d8;
-            border: 1px solid #27272a;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            transition: all 0.15s;
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        .button-secondary:hover {
-            border-color: #a1a1aa;
-            background-color: #18181b;
-        }
-
-        /* Status indicator */
-        .status-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            background-color: #09090b;
-            border: 1px solid #27272a;
-            margin-bottom: 12px;
-            font-size: 12px;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background-color: #a1a1aa;
-            border-radius: 50%;
-        }
-
-        .status-dot.active {
-            background-color: #fafafa;
-        }
-
-        .status-text {
-            color: #a1a1aa;
-        }
-
-        /* Output boxes */
-        .output-box {
-            background-color: #09090b;
-            border: 1px solid #27272a;
-            padding: 10px 12px;
-            font-family: monospace;
-            font-size: 11px;
-            max-height: 150px;
-            overflow-y: auto;
-            color: #a1a1aa;
-            line-height: 1.5;
-        }
-
-        /* Two-row grid for results */
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-
-        .wide-panel {
-            grid-column: 1 / -1;
-        }
-
-        .progress-bar {
-            display: flex;
-            height: 4px;
-            background-color: #27272a;
-            margin: 12px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #fafafa;
-            transition: width 0.3s;
-        }
-
-        .progress-text {
-            font-size: 11px;
-            color: #a1a1aa;
-            margin-top: 4px;
-        }
-
-        .helper-text {
-            font-size: 10px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-
-        /* Control panel - top section with buttons and difficulty */
+        /* Control panel */
         .control-panel {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 16px;
             margin-bottom: 24px;
-            align-items: flex-start;
         }
 
         .control-section {
@@ -317,72 +472,39 @@
             margin-bottom: 8px;
         }
 
-        /* Step progress visualization */
-        .step-indicator {
+        /* Results section */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .results-grid.full-width {
+            grid-template-columns: 1fr;
+        }
+
+        .output-box {
+            background-color: #09090b;
             border: 1px solid #27272a;
-            background-color: #111113;
-            padding: 16px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 150px;
+            overflow-y: auto;
+            color: #a1a1aa;
+            line-height: 1.5;
+            border-radius: 2px;
+        }
+
+        .wide-panel {
             grid-column: 1 / -1;
         }
 
-        .step-progress {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .step-node {
-            width: 32px;
-            height: 32px;
-            border: 1px solid #27272a;
-            background-color: #09090b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-            color: #a1a1aa;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .step-node.active {
-            background-color: #fafafa;
-            color: #09090b;
-            border-color: #fafafa;
-            animation: pulse-step 0.5s ease-out;
-        }
-
-        .step-node.completed {
-            background-color: #111113;
-            border-color: #a1a1aa;
-            color: #fafafa;
-        }
-
-        @keyframes pulse-step {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .step-label {
+        /* Helper text */
+        .helper-text {
             font-size: 10px;
-            color: #a1a1aa;
+            color: #6b7280;
             margin-top: 4px;
-            text-align: center;
-        }
-
-        /* Two-column buttons */
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .button-group .button {
-            margin: 0;
         }
 
         @media (max-width: 1024px) {
@@ -395,226 +517,310 @@
             .control-panel {
                 grid-template-columns: 1fr;
             }
-            .step-indicator {
-                grid-column: 1;
-            }
-            .button-group {
-                grid-template-columns: 1fr 1fr;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="title">Playground</div>
-            <div class="subtitle">Interactive Testing Environment</div>
+            <div class="title">Interactive Playground</div>
+            <div class="subtitle">Learn UX Analysis Through Examples</div>
         </div>
 
-        <!-- STEP PROGRESS INDICATOR -->
-        <div class="step-indicator">
-            <div style="margin-bottom: 12px;">
-                <div class="panel-title" style="margin-bottom: 10px;">Episode Progress</div>
+        <!-- WELCOME SCREEN -->
+        <div class="welcome-screen active" id="welcomeScreen">
+            <div class="welcome-title">UX Analysis Playground</div>
+            <div class="welcome-text">
+                Analyze e-commerce analytics data and identify UX issues. The system will automatically generate analysis suggestions based on the data. Your goal is to submit accurate findings.
             </div>
-            <div class="step-progress" id="stepProgress">
-                <!-- Steps will be generated dynamically -->
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid #27272a;">
-                <div style="font-size: 11px;">
-                    <span style="color: #a1a1aa;">Step:</span> <span style="color: #fafafa; font-family: monospace;" id="progressStep">0</span>
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div>Select difficulty level</div>
                 </div>
-                <div style="font-size: 11px;">
-                    <span style="color: #a1a1aa;">Score:</span> <span style="color: #fafafa; font-family: monospace;" id="progressScore">0.00</span>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div>Click "Reset Episode" to load analytics</div>
                 </div>
-                <div style="font-size: 11px;">
-                    <span style="color: #a1a1aa;">Status:</span> <span style="color: #fafafa; font-family: monospace;" id="progressStatus">waiting</span>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div>Review data and auto-generated analysis</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div>Submit analysis and get instant feedback</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">5</div>
+                    <div>Track your score through the episode</div>
                 </div>
             </div>
         </div>
 
-        <!-- CONTROL PANEL - Difficulty & Buttons -->
-        <div class="control-panel">
+        <!-- STEP PROGRESS -->
+        <div class="step-progress-container" id="progressContainer" style="display: none;">
+            <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                <span style="color: #fafafa; font-weight: 600; font-size: 12px;">Episode Progress</span>
+                <div class="info-btn">
+                    i
+                    <div class="tooltip multiline">Each number represents one page analysis. White is current, dark is completed.</div>
+                </div>
+            </div>
+            <div class="step-progress" id="stepProgress"></div>
+            <div class="progress-stats">
+                <div class="stat">
+                    <div class="stat-label">Step</div>
+                    <div class="stat-value" id="progressStep">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="progressScore">0.00</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Status</div>
+                    <div class="stat-value" id="progressStatus">waiting</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL PANEL -->
+        <div class="control-panel" id="controlPanel">
             <div class="control-section">
-                <label class="label">Difficulty</label>
-                <select id="difficulty">
+                <div class="label-with-info">
+                    <label class="label" style="margin-bottom: 0;">Select Difficulty</label>
+                    <div class="info-btn">
+                        i
+                        <div class="tooltip multiline">Easy: 3 pages. Medium: 5 pages. Hard: 7 pages with complex issues.</div>
+                    </div>
+                </div>
+                <select id="difficulty" style="margin-top: 6px;">
                     <option value="easy">Easy</option>
                     <option value="medium" selected>Medium</option>
                     <option value="hard">Hard</option>
                 </select>
-                <div class="helper-text">Select task difficulty</div>
+                <div class="helper-text">Choose task complexity</div>
             </div>
-
             <div class="control-section">
-                <label class="label" style="color: transparent; height: 17px;">Action</label>
-                <button class="button" onclick="reset()">Reset Episode</button>
-            </div>
-
-            <div class="control-section">
-                <label class="label" style="color: transparent; height: 17px;">Submit</label>
-                <button class="button" onclick="submit()" id="submitBtn" disabled>Submit Analysis</button>
-            </div>
-        </div>
-            <!-- ANALYTICS DATA PANEL -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">Current Page Analytics</div>
-                </div>
-                <div class="panel-content">
-                    <div id="analyticsContainer" style="font-size: 12px;">
-                        <div style="color: #a1a1aa; padding: 16px 0; text-align: center;">
-                            Reset episode to view analytics data
-                        </div>
+                <div class="label-with-info">
+                    <label class="label" style="margin-bottom: 0; color: transparent;">_</label>
+                    <div class="info-btn" style="margin-left: 0;">
+                        i
+                        <div class="tooltip multiline">Loads a new episode with fresh analytics data. All previous progress will reset.</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- FORM PANEL -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">Submit Analysis</div>
-                </div>
-                <div class="panel-content">
-                    <div class="status-bar">
-                        <div class="status-dot" id="statusDot"></div>
-                        <div class="status-text" id="statusText">Waiting for reset</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Finding Type</label>
-                        <select id="findingType">
-                            <option value="issue">Issue</option>
-                            <option value="no_issue">No Issue</option>
-                            <option value="ambiguous">Ambiguous</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Affected Element</label>
-                        <input type="text" id="element" placeholder="e.g., Checkout button">
-                        <div class="helper-text">Leave as 'N/A' if no issue found</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Issue Category</label>
-                        <select id="category">
-                            <option value="rage_click">Rage Click</option>
-                            <option value="dead_click">Dead Click</option>
-                            <option value="funnel_dropoff">Funnel Dropoff</option>
-                            <option value="scroll_dropoff">Scroll Dropoff</option>
-                            <option value="mobile_layout_break">Mobile Layout Break</option>
-                            <option value="quickback">Quick Back</option>
-                            <option value="form_abandonment">Form Abandonment</option>
-                            <option value="cta_invisible">CTA Invisible</option>
-                            <option value="search_no_results">Search No Results</option>
-                            <option value="normal_behavior">Normal Behavior</option>
-                            <option value="unclear">Unclear</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Severity</label>
-                        <select id="severity">
-                            <option value="critical">Critical</option>
-                            <option value="high">High</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="low">Low</option>
-                            <option value="none">None</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Recommendation (minimum 20 words)</label>
-                        <textarea id="recommendation" placeholder="Specific, actionable fix..."></textarea>
-                        <div class="helper-text">Minimum 20 words. Must mention element and specific change.</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Fix Category</label>
-                        <select id="fixCategory">
-                            <option value="redesign_element">Redesign Element</option>
-                            <option value="reposition_element">Reposition Element</option>
-                            <option value="fix_broken_link">Fix Broken Link</option>
-                            <option value="improve_copy">Improve Copy</option>
-                            <option value="add_feedback">Add Feedback</option>
-                            <option value="reduce_steps">Reduce Steps</option>
-                            <option value="increase_contrast">Increase Contrast</option>
-                            <option value="add_loading_state">Add Loading State</option>
-                            <option value="fix_mobile_layout">Fix Mobile Layout</option>
-                            <option value="no_fix_needed">No Fix Needed</option>
-                            <option value="investigate_further">Investigate Further</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Impact Estimate</label>
-                        <input type="text" id="impact" placeholder="e.g., 15-25% reduction in bounce rate">
-                        <div class="helper-text">Expected metric improvement</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Confidence (0.0 - 1.0)</label>
-                        <input type="number" id="confidence" min="0" max="1" step="0.01" value="0.5">
-                    </div>
-                </div>
+                <button class="button" id="resetBtn" onclick="resetEpisode()" style="margin-top: 17px;">Reset Episode</button>
             </div>
         </div>
 
-        <!-- RESULTS PANELS -->
-        <div class="results-grid" id="resultsSection" style="display: none;">
-            <!-- Progress -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">Episode Progress</div>
-                </div>
-                <div class="panel-content">
-                    <div style="font-size: 12px;">
-                        <div class="metric-item">
-                            <span class="metric-label">Current Step</span>
-                            <span class="metric-value" id="currentStep">-</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-label">Total Steps</span>
-                            <span class="metric-value" id="totalSteps">-</span>
-                        </div>
-                        <div style="margin-top: 12px;">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        <!-- MAIN CONTENT (Hidden initially) -->
+        <div id="mainContent" style="display: none;">
+            <div class="guidance-box" id="guidanceBox">
+                <span class="guidance-icon"></span>
+                <span id="guidanceText">Read the analytics data to identify UX issues</span>
+            </div>
+
+            <div class="main-grid">
+                <!-- ANALYTICS PANEL -->
+                <div class="panel" id="analyticsPanel">
+                    <div class="panel-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="panel-title">Page Analytics</div>
+                            <div class="info-btn">
+                                i
+                                <div class="tooltip multiline">Real user behavior metrics. Metrics, signals, and heatmaps show where the UX issue might be.</div>
                             </div>
-                            <div class="progress-text" id="progressText">0%</div>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div id="analyticsContainer" style="font-size: 12px;">
+                            <div style="color: #a1a1aa; padding: 16px 0; text-align: center;">
+                                Loading analytics...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANALYSIS FORM PANEL -->
+                <div class="panel" id="formPanel">
+                    <div class="panel-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="panel-title">Analysis</div>
+                            <div class="info-btn">
+                                i
+                                <div class="tooltip multiline">Auto-filled form based on analytics. Review and submit your findings.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="form-group">
+                            <div class="label-with-info">
+                                <label class="label" style="margin-bottom: 0;">Finding Type</label>
+                                <div class="info-btn">
+                                    i
+                                    <div class="tooltip multiline">Issue: A UX problem found. No Issue: Everything is fine. Ambiguous: Unclear result.</div>
+                                </div>
+                            </div>
+                            <select id="findingType" disabled style="margin-top: 6px;">
+                                <option value="issue">Issue</option>
+                                <option value="no_issue">No Issue</option>
+                                <option value="ambiguous">Ambiguous</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-info">
+                                <label class="label" style="margin-bottom: 0;">Affected Element</label>
+                                <div class="info-btn">
+                                    i
+                                    <div class="tooltip multiline">Which UI component or page section has the problem? (e.g., "Add to Cart button")</div>
+                                </div>
+                            </div>
+                            <input type="text" id="element" placeholder="Auto-filled" disabled style="margin-top: 6px;">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-info">
+                                <label class="label" style="margin-bottom: 0;">Issue Category</label>
+                                <div class="info-btn">
+                                    i
+                                    <div class="tooltip multiline">Type of user friction: rage clicks, dead clicks, form abandonment, etc.</div>
+                                </div>
+                            </div>
+                            <select id="category" disabled style="margin-top: 6px;">
+                                <option value="rage_click">Rage Click</option>
+                                <option value="dead_click">Dead Click</option>
+                                <option value="funnel_dropoff">Funnel Dropoff</option>
+                                <option value="scroll_dropoff">Scroll Dropoff</option>
+                                <option value="mobile_layout_break">Mobile Layout Break</option>
+                                <option value="quickback">Quick Back</option>
+                                <option value="form_abandonment">Form Abandonment</option>
+                                <option value="normal_behavior">Normal Behavior</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-info">
+                                <label class="label" style="margin-bottom: 0;">Severity</label>
+                                <div class="info-btn">
+                                    i
+                                    <div class="tooltip multiline">How critical is this issue? Critical = major user impact. None = no problem.</div>
+                                </div>
+                            </div>
+                            <select id="severity" disabled style="margin-top: 6px;">
+                                <option value="critical">Critical</option>
+                                <option value="high">High</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="low">Low</option>
+                                <option value="none">None</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-info">
+                                <label class="label" style="margin-bottom: 0;">Recommendation</label>
+                                <div class="info-btn">
+                                    i
+                                    <div class="tooltip multiline">Specific, actionable fix for the issue. The system auto-fills this based on the problem detected.</div>
+                                </div>
+                            </div>
+                            <textarea id="recommendation" placeholder="Auto-filled" disabled style="margin-top: 6px;"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-info">
+                                <label class="label" style="margin-bottom: 0;">Fix Category</label>
+                                <div class="info-btn">
+                                    i
+                                    <div class="tooltip multiline">Type of solution: redesign, reposition, add feedback, reduce steps, etc.</div>
+                                </div>
+                            </div>
+                            <select id="fixCategory" disabled style="margin-top: 6px;">
+                                <option value="redesign_element">Redesign Element</option>
+                                <option value="reposition_element">Reposition Element</option>
+                                <option value="fix_broken_link">Fix Broken Link</option>
+                                <option value="improve_copy">Improve Copy</option>
+                                <option value="add_feedback">Add Feedback</option>
+                                <option value="reduce_steps">Reduce Steps</option>
+                                <option value="increase_contrast">Increase Contrast</option>
+                                <option value="add_loading_state">Add Loading State</option>
+                                <option value="no_fix_needed">No Fix Needed</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-info">
+                                <label class="label" style="margin-bottom: 0;">Confidence</label>
+                                <div class="info-btn">
+                                    i
+                                    <div class="tooltip multiline">How confident are you in this analysis? 1.0 = very confident. 0.0 = not confident.</div>
+                                </div>
+                            </div>
+                            <input type="number" id="confidence" min="0" max="1" step="0.01" value="0.75" disabled style="margin-top: 6px;">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Rewards -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">Scoring</div>
+            <div style="height: 16px;"></div>
+
+            <!-- SUBMIT BUTTON -->
+            <div style="border: 1px solid #27272a; background-color: #111113; padding: 16px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <button class="button" id="submitBtn" onclick="submitAnalysis()" disabled style="margin: 0; flex: 1;">
+                        Submit Analysis
+                    </button>
+                    <div class="info-btn">
+                        i
+                        <div class="tooltip multiline">Send your analysis to the grader. Get instant feedback on accuracy. Available after episode resets.</div>
+                    </div>
                 </div>
-                <div class="panel-content">
-                    <div class="metric-item">
-                        <span class="metric-label">Last Reward</span>
-                        <span class="metric-value" id="lastReward">-</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Cumulative Score</span>
-                        <span class="metric-value" id="cumulativeScore">-</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="metric-label">Episode Status</span>
-                        <span class="metric-value" id="episodeStatus">-</span>
-                    </div>
+                <div class="helper-text" style="margin-top: 8px; text-align: center;">
+                    <span id="submitHelp">Waiting for episode reset...</span>
                 </div>
             </div>
 
-            <!-- Feedback -->
-            <div class="panel wide-panel">
-                <div class="panel-header">
-                    <div class="panel-title">Grader Feedback</div>
+            <!-- RESULTS SECTION -->
+            <div class="results-grid full-width" id="resultsSection" style="display: none; margin-top: 24px;">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="panel-title">Submission Feedback</div>
+                            <div class="info-btn">
+                                i
+                                <div class="tooltip multiline">What the grader thinks about your analysis. Comments on accuracy of each field.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="output-box" id="feedbackBox">
+                            (Feedback appears here)
+                        </div>
+                    </div>
                 </div>
-                <div class="panel-content">
-                    <div class="output-box" id="feedbackBox" style="max-height: 120px;">
-                        (Feedback appears here after submission)
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="panel-title">Score Details</div>
+                            <div class="info-btn">
+                                i
+                                <div class="tooltip multiline">Last Reward: This submission's score. Cumulative: Total points so far. Status: Active or Complete.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="metric-item">
+                            <span class="metric-label">Last Reward</span>
+                            <span class="metric-value" id="lastReward">-</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Cumulative Score</span>
+                            <span class="metric-value" id="cumulativeScore">-</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Episode Status</span>
+                            <span class="metric-value" id="episodeStatus">-</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -627,19 +833,12 @@
         let currentObservation = null;
         let totalSteps = 0;
 
-        function setStatus(text, active = false) {
-            const dot = document.getElementById('statusDot');
-            const textEl = document.getElementById('statusText');
-            textEl.textContent = text;
-            dot.classList.toggle('active', active);
-        }
-
         function generateStepIndicators(total) {
             const container = document.getElementById('stepProgress');
             container.innerHTML = '';
             totalSteps = total;
 
-            for (let i = 1; i <= Math.min(total, 10); i++) {
+            for (let i = 1; i <= Math.min(total, 15); i++) {
                 const node = document.createElement('div');
                 node.id = `step-${i}`;
                 node.className = 'step-node';
@@ -647,12 +846,12 @@
                 container.appendChild(node);
             }
 
-            if (total > 10) {
+            if (total > 15) {
                 const more = document.createElement('div');
                 more.style.color = '#a1a1aa';
                 more.style.fontSize = '11px';
                 more.style.padding = '0 8px';
-                more.textContent = `... +${total - 10}`;
+                more.textContent = `...+${total - 15}`;
                 container.appendChild(more);
             }
         }
@@ -661,14 +860,13 @@
             document.getElementById('progressStep').textContent = currentStep;
             document.getElementById('progressScore').textContent = score.toFixed(4);
 
-            for (let i = 1; i <= Math.min(totalSteps, 10); i++) {
+            for (let i = 1; i <= Math.min(totalSteps, 15); i++) {
                 const node = document.getElementById(`step-${i}`);
                 if (!node) continue;
 
                 node.classList.remove('active', 'completed');
                 if (i === currentStep) {
                     node.classList.add('active');
-                    if (score > 0.5) node.classList.add('completed');
                 } else if (i < currentStep) {
                     node.classList.add('completed');
                 }
@@ -679,31 +877,27 @@
             const container = document.getElementById('analyticsContainer');
             let html = '';
 
-            // Basic metrics
             html += '<div class="data-section">';
             html += '<h4>Metrics</h4>';
             html += `<div class="metric-item"><span class="metric-label">Page</span><span class="metric-value">${pageData.page_name}</span></div>`;
             html += `<div class="metric-item"><span class="metric-label">Sessions</span><span class="metric-value">${pageData.total_sessions}</span></div>`;
             html += `<div class="metric-item"><span class="metric-label">Bounce Rate</span><span class="metric-value">${(pageData.bounce_rate * 100).toFixed(1)}%</span></div>`;
-            html += `<div class="metric-item"><span class="metric-label">Mobile</span><span class="metric-value">${(pageData.mobile_sessions_pct * 100).toFixed(1)}%</span></div>`;
-            html += `<div class="metric-item"><span class="metric-label">Mobile Bounce</span><span class="metric-value">${(pageData.mobile_bounce_rate * 100).toFixed(1)}%</span></div>`;
-            html += `<div class="metric-item"><span class="metric-label">Avg Duration</span><span class="metric-value">${pageData.avg_session_duration_seconds.toFixed(0)}s</span></div>`;
+            html += `<div class="metric-item"><span class="metric-label">Mobile %</span><span class="metric-value">${(pageData.mobile_sessions_pct * 100).toFixed(1)}%</span></div>`;
+            html += `<div class="metric-item"><span class="metric-label">Duration</span><span class="metric-value">${pageData.avg_session_duration_seconds.toFixed(0)}s</span></div>`;
             html += '</div>';
 
-            // Behavioral signals
             if (pageData.behavioral_signals && pageData.behavioral_signals.length > 0) {
                 html += '<div class="data-section">';
-                html += '<h4>Behavioral Signals</h4>';
+                html += '<h4>User Signals</h4>';
                 pageData.behavioral_signals.forEach(sig => {
-                    html += `<div class="signal-item"><div class="signal-type">${sig.signal_type}</div><div class="signal-detail">${sig.affected_element} (${(sig.rate * 100).toFixed(1)}% of sessions)</div></div>`;
+                    html += `<div class="signal-item"><div class="signal-type">${sig.signal_type}</div><div class="signal-detail">${sig.affected_element} (${(sig.rate * 100).toFixed(1)}%)</div></div>`;
                 });
                 html += '</div>';
             }
 
-            // Heatmap zones
             if (pageData.heatmap_zones && pageData.heatmap_zones.length > 0) {
                 html += '<div class="data-section">';
-                html += '<h4>Heatmap Zones</h4>';
+                html += '<h4>Heatmap</h4>';
                 pageData.heatmap_zones.forEach(zone => {
                     html += `<div class="metric-item"><span class="metric-label">${zone.zone_name}</span><span class="metric-value">${(zone.click_density_pct * 100).toFixed(1)}%</span></div>`;
                 });
@@ -713,19 +907,50 @@
             container.innerHTML = html;
         }
 
-        async function reset() {
-            const difficulty = document.getElementById('difficulty').value;
+        function autoFillAnalysis(pageData) {
+            if (!pageData.behavioral_signals || pageData.behavioral_signals.length === 0) {
+                document.getElementById('findingType').value = 'no_issue';
+                document.getElementById('element').value = 'N/A';
+                document.getElementById('category').value = 'normal_behavior';
+                document.getElementById('severity').value = 'none';
+                document.getElementById('recommendation').value = 'No significant UX issues detected. Page metrics are within normal ranges.';
+                document.getElementById('fixCategory').value = 'no_fix_needed';
+                return;
+            }
 
-            setStatus('Resetting...', true);
+            const signal = pageData.behavioral_signals[0];
+            const element = signal.affected_element;
+            const signalType = signal.signal_type;
+
+            document.getElementById('findingType').value = 'issue';
+            document.getElementById('element').value = element;
+            document.getElementById('category').value = signalType.toLowerCase().replace(/\s+/g, '_') || 'rage_click';
+            document.getElementById('severity').value = signal.rate > 0.3 ? 'high' : 'medium';
+            document.getElementById('recommendation').value = `Investigate and fix the ${signalType.toLowerCase()} issue with the ${element} element. Users are experiencing difficulty with this component, causing ${(signal.rate * 100).toFixed(1)}% of sessions to be affected. Implement improvements to enhance user experience and reduce abandonment.`;
+            document.getElementById('fixCategory').value = 'redesign_element';
+            document.getElementById('confidence').value = '0.75';
+        }
+
+        async function resetEpisode() {
+            document.getElementById('welcomeScreen').classList.remove('active');
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('resetBtn').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('difficulty').disabled = true;
+
+            document.getElementById('guidanceText').textContent = 'Resetting episode...';
+            document.getElementById('submitHelp').textContent = 'Loading...';
+            document.getElementById('progressStatus').textContent = 'loading';
 
             try {
                 const response = await fetch('/reset', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ task_id: difficulty })
+                    body: JSON.stringify({ task_id: document.getElementById('difficulty').value })
                 });
 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!response.ok) throw new Error('Reset failed');
                 const data = await response.json();
 
                 currentObservation = data.observation;
@@ -733,40 +958,25 @@
 
                 generateStepIndicators(data.observation.total_steps);
                 updateStepVisual(data.observation.current_step, data.observation.cumulative_score || 0);
-                document.getElementById('progressStatus').textContent = 'active';
-
                 displayAnalytics(data.observation.current_page_data);
-                document.getElementById('submitBtn').disabled = false;
+                autoFillAnalysis(data.observation.current_page_data);
 
-                setStatus('Ready', true);
-                document.getElementById('resultsSection').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('analyticsPanel').classList.add('highlighted');
+                document.getElementById('guidanceText').textContent = 'Review the analytics data, then click submit';
+                document.getElementById('submitHelp').textContent = 'Ready to submit analysis';
+                document.getElementById('progressStatus').textContent = 'ready';
             } catch (error) {
-                setStatus('Error: Reset failed', false);
-                episodeActive = false;
+                document.getElementById('guidanceText').textContent = 'Error: Reset failed';
+                document.getElementById('resetBtn').disabled = false;
+                document.getElementById('difficulty').disabled = false;
             }
         }
 
-        async function submit() {
-            if (!episodeActive) {
-                setStatus('Error: No active episode', false);
-                return;
-            }
-
-            const rec = document.getElementById('recommendation').value.trim();
-            const elem = document.getElementById('element').value.trim();
-
-            if (!elem) {
-                setStatus('Error: Element required', false);
-                return;
-            }
-
-            const wordCount = rec.split(/\s+/).filter(w => w.length > 0).length;
-            if (wordCount < 20) {
-                setStatus(`Error: Recommendation minimum 20 words (${wordCount} provided)`, false);
-                return;
-            }
-
-            setStatus('Submitting...', true);
+        async function submitAnalysis() {
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitHelp').textContent = 'Submitting...';
+            document.getElementById('progressStatus').textContent = 'submitting';
 
             try {
                 const response = await fetch('/step', {
@@ -774,56 +984,51 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         finding_type: document.getElementById('findingType').value,
-                        affected_element: elem,
+                        affected_element: document.getElementById('element').value,
                         issue_category: document.getElementById('category').value,
                         severity: document.getElementById('severity').value,
-                        recommendation: rec,
+                        recommendation: document.getElementById('recommendation').value,
                         fix_category: document.getElementById('fixCategory').value,
-                        impact_estimate: document.getElementById('impact').value.trim() || 'N/A',
-                        confidence: parseFloat(document.getElementById('confidence').value) || 0.5
+                        impact_estimate: 'N/A',
+                        confidence: parseFloat(document.getElementById('confidence').value) || 0.75
                     })
                 });
 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!response.ok) throw new Error('Submit failed');
                 const data = await response.json();
 
                 currentObservation = data.observation;
                 const done = data.observation.done;
 
                 updateStepVisual(data.observation.current_step, data.observation.cumulative_score);
-                document.getElementById('progressStatus').textContent = done ? 'complete' : 'active';
-
-                displayResults(data.observation, data.reward);
+                document.getElementById('lastReward').textContent = data.reward.toFixed(4);
+                document.getElementById('cumulativeScore').textContent = data.observation.cumulative_score.toFixed(4);
+                document.getElementById('episodeStatus').textContent = done ? 'Complete' : 'Active';
+                document.getElementById('feedbackBox').textContent = data.observation.grader_feedback || 'Submitted successfully';
                 document.getElementById('resultsSection').style.display = 'grid';
 
+                document.getElementById('analyticsPanel').classList.remove('highlighted');
+                document.getElementById('progressStatus').textContent = done ? 'complete' : 'ready';
+
                 if (done) {
-                    episodeActive = false;
-                    setStatus('Episode complete', false);
+                    document.getElementById('submitHelp').textContent = 'Episode complete! Select new difficulty to continue';
+                    document.getElementById('resetBtn').disabled = false;
+                    document.getElementById('difficulty').disabled = false;
+                    document.getElementById('guidanceText').textContent = 'Episode finished. Start a new one or change difficulty.';
                 } else {
-                    setStatus('Ready', true);
+                    document.getElementById('submitHelp').textContent = 'Ready for next analysis';
+                    document.getElementById('analyticsPanel').classList.add('highlighted');
+                    displayAnalytics(data.observation.current_page_data);
+                    autoFillAnalysis(data.observation.current_page_data);
+                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('guidanceText').textContent = 'Next page loaded. Review and submit analysis.';
                 }
             } catch (error) {
-                setStatus('Error: Submit failed', false);
+                document.getElementById('submitHelp').textContent = 'Error: Submit failed';
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('progressStatus').textContent = 'error';
             }
         }
-
-        function displayResults(obs, reward) {
-            document.getElementById('currentStep').textContent = obs.current_step;
-            document.getElementById('totalSteps').textContent = obs.total_steps;
-            document.getElementById('lastReward').textContent = reward.toFixed(4);
-            document.getElementById('cumulativeScore').textContent = obs.cumulative_score.toFixed(4);
-            document.getElementById('episodeStatus').textContent = obs.done ? 'Complete' : 'Active';
-            document.getElementById('feedbackBox').textContent = obs.grader_feedback || '(No feedback)';
-
-            const pct = (obs.current_step / obs.total_steps) * 100;
-            document.getElementById('progressFill').style.width = pct + '%';
-            document.getElementById('progressText').textContent = Math.round(pct) + '%';
-        }
-
-        window.addEventListener('load', () => {
-            setStatus('Ready', true);
-            document.getElementById('progressStatus').textContent = 'waiting';
-        });
     </script>
 </body>
 </html>
