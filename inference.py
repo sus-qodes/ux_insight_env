@@ -121,6 +121,11 @@ def log_end(success: bool, steps: int, rewards: List[float]):
     )
 
 
+def clamp_task_score(value: float) -> float:
+    """Keep externally reported task scores strictly inside (0, 1)."""
+    return min(max(value, 0.01), 0.99)
+
+
 # ---------------------------------------------------------------------------
 # Auth helpers
 # ---------------------------------------------------------------------------
@@ -281,7 +286,7 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> Dict[str, An
     history: List[str] = []
     rewards: List[float] = []
     steps_taken = 0
-    score = 0.0
+    score = 0.01
     success = False
     task_error = None
 
@@ -358,13 +363,13 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> Dict[str, An
                 break
 
         max_reward = TASK_MAX_REWARD.get(task_name, MAX_TOTAL_REWARD)
-        score = sum(rewards) / max_reward if max_reward > 0 else 0.0
-        score = min(max(score, 0.0), 1.0)
+        score = clamp_task_score(sum(rewards) / max_reward if max_reward > 0 else 0.01)
         success = score >= SUCCESS_THRESHOLD
 
     except Exception as e:
         print(f"[DEBUG] Task {task_name} failed with error: {e}", flush=True)
         task_error = str(e)
+        score = clamp_task_score(score)
     finally:
         if env is not None:
             try:
@@ -413,10 +418,10 @@ async def main() -> None:
     print(f"[DEBUG] {'Model':<55} {'Easy':>6} {'Medium':>8} {'Hard':>6} {'Avg':>6}", flush=True)
     print(f"[DEBUG] {'-'*55} {'-'*6} {'-'*8} {'-'*6} {'-'*6}", flush=True)
     for model, task_results in all_results.items():
-        avg = (
+        avg = clamp_task_score(
             sum(task["score"] for task in task_results.values()) / len(task_results)
             if task_results
-            else 0.0
+            else 0.01
         )
         print(
             f"[DEBUG] {model:<55} {task_results.get('easy', {}).get('score', 0.0):.4f} "
@@ -435,10 +440,10 @@ async def main() -> None:
         "results": {
             model: {
                 "tasks": task_results,
-                "avg": (
+                "avg": clamp_task_score(
                     sum(task["score"] for task in task_results.values()) / len(task_results)
                     if task_results
-                    else 0.0
+                    else 0.01
                 ),
             }
             for model, task_results in all_results.items()

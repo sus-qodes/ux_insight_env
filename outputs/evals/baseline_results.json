@@ -1,0 +1,52 @@
+{
+  "generated_at_utc": "2026-04-12T19:12:51.092437+00:00",
+  "benchmark": "ux-insight-env",
+  "endpoint": "https://router.huggingface.co/v1/",
+  "environment": "https://sushere-ux-insight-env.hf.space",
+  "seeds": {
+    "easy": 101,
+    "medium": 202,
+    "hard": 303
+  },
+  "results": {
+    "meta-llama/Llama-3.3-70B-Instruct": {
+      "tasks": {
+        "easy": {
+          "score": 0.835,
+          "success": true,
+          "steps": 1,
+          "rewards": [
+            0.835
+          ],
+          "error": null
+        },
+        "medium": {
+          "score": 0.8825238095238096,
+          "success": true,
+          "steps": 3,
+          "rewards": [
+            0.8550000000000001,
+            0.9085714285714287,
+            0.8839999999999999
+          ],
+          "error": null
+        },
+        "hard": {
+          "score": 0.8523492063492064,
+          "success": true,
+          "steps": 6,
+          "rewards": [
+            0.8728571428571429,
+            0.8733333333333333,
+            0.99,
+            0.7085714285714286,
+            0.8966666666666667,
+            0.7726666666666667
+          ],
+          "error": null
+        }
+      },
+      "avg": 0.8566243386243387
+    }
+  }
+}

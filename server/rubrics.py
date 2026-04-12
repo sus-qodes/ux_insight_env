@@ -57,10 +57,10 @@ class UXOutcomeRubric(Rubric):
         This is the per-step score after grading and anti-exploit penalties.
         """
         if not hasattr(observation, "metadata") or observation.metadata is None:
-            return 0.0
+            return 0.01
 
-        step_reward = observation.metadata.get("step_reward", 0.0)
-        return max(min(step_reward, 1.0), -0.5)
+        step_reward = observation.metadata.get("step_reward", 0.01)
+        return max(min(step_reward, 0.99), 0.01)
 
 
 class UXProcessRubric(Rubric):
@@ -141,7 +141,7 @@ class UXAnalystRubric(Rubric):
         ambiguous_bonus = self.ambiguous_bonus(action, observation)
 
         combined = outcome_score + ambiguous_bonus
-        return max(min(combined, 1.0), -0.5)
+        return max(min(combined, 0.99), 0.01)
 
     def reset(self):
         """Reset internal state of all component rubrics."""
