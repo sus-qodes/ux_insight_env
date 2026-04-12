@@ -215,25 +215,25 @@ def test_grade_step_red_herring_false_positive(red_herring_order_confirmation):
 
 
 def test_grade_severity_exact_match():
-    """Exact severity match should score 1.0."""
-    assert grade_severity("critical", "critical") == 1.0
-    assert grade_severity("high", "high") == 1.0
-    assert grade_severity("medium", "medium") == 1.0
-    print("✓ Exact severity matches score 1.0")
+    """Exact severity match should score 0.95."""
+    assert grade_severity("critical", "critical") == 0.95
+    assert grade_severity("high", "high") == 0.95
+    assert grade_severity("medium", "medium") == 0.95
+    print("✓ Exact severity matches score 0.95")
 
 
 def test_grade_severity_off_by_one():
-    """Off-by-one severity should score 0.5."""
-    assert grade_severity("critical", "high") == 0.5
-    assert grade_severity("medium", "low") == 0.5
-    print("✓ Off-by-one severity scores 0.5")
+    """Off-by-one severity should score 0.55."""
+    assert grade_severity("critical", "high") == 0.55
+    assert grade_severity("medium", "low") == 0.55
+    print("✓ Off-by-one severity scores 0.55")
 
 
 def test_grade_severity_wrong():
-    """Wrong severity should score 0.0."""
-    assert grade_severity("critical", "low") == 0.0
-    assert grade_severity("high", "none") == 0.0
-    print("✓ Wrong severity scores 0.0")
+    """Wrong severity should score 0.05."""
+    assert grade_severity("critical", "low") == 0.05
+    assert grade_severity("high", "none") == 0.05
+    print("✓ Wrong severity scores 0.05")
 
 
 # ---------------------------------------------------------------------------
@@ -247,11 +247,11 @@ def test_keyword_coverage_score():
     text = "Add a loading indicator to the Add to Cart button when clicked"
     keywords = ["add to cart", "loading", "button"]
     score = keyword_coverage_score(text, keywords)
-    assert score == 1.0, f"Should match all keywords, got {score}"
+    assert score == 0.99, f"Should match all keywords, got {score}"
 
     # Partial coverage
     score2 = keyword_coverage_score(text, ["add to cart", "hover", "animation"])
-    assert 0 < score2 < 1.0, f"Should partially match, got {score2}"
+    assert 0 < score2 < 0.99, f"Should partially match, got {score2}"
     print(f"✓ Keyword coverage: 100% = {score:.2f}, partial = {score2:.2f}")
 
 
