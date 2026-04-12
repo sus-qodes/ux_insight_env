@@ -26,24 +26,26 @@ def _tokenize(text: str) -> set:
 
 
 def keyword_overlap_score(text_a: str, text_b: str, threshold: float = 0.4) -> float:
-    """Word-level Jaccard-like overlap between two strings, 0.0–1.0."""
+    """Word-level Jaccard-like overlap between two strings, [0.01, 0.99]."""
     tokens_a = _tokenize(text_a)
     tokens_b = _tokenize(text_b)
     if not tokens_a or not tokens_b:
-        return 0.0
+        return 0.01
     intersection = tokens_a & tokens_b
     union = tokens_a | tokens_b
     score = len(intersection) / len(union)
-    return min(score / threshold, 1.0) if threshold > 0 else score
+    result = min(score / threshold, 0.99) if threshold > 0 else score
+    return max(result, 0.01)
 
 
 def keyword_coverage_score(text: str, expected_keywords: List[str]) -> float:
-    """Fraction of expected keywords that appear in text."""
+    """Fraction of expected keywords that appear in text, [0.01, 0.99]."""
     if not expected_keywords:
-        return 1.0  # no keywords to match = perfect score
+        return 0.95  # no keywords to match = high score (was 1.0)
     text_lower = text.lower()
     matched = sum(1 for kw in expected_keywords if kw.lower() in text_lower)
-    return matched / len(expected_keywords)
+    raw_score = matched / len(expected_keywords)
+    return max(min(raw_score, 0.99), 0.01)
 
 
 # ---------------------------------------------------------------------------
@@ -54,16 +56,16 @@ _SEVERITY_RANKS = {"critical": 4, "high": 3, "medium": 2, "low": 1, "none": 0}
 
 
 def grade_severity(predicted: str, expected: str) -> float:
-    """Score severity accuracy. Exact match = 1.0, off-by-one = 0.5, else 0.0."""
+    """Score severity accuracy. Exact match = 0.95, off-by-one = 0.55, else 0.05."""
     pred_rank = _SEVERITY_RANKS.get(predicted, 0)
     exp_rank = _SEVERITY_RANKS.get(expected, 0)
     diff = abs(pred_rank - exp_rank)
     if diff == 0:
-        return 1.0
+        return 0.95
     elif diff == 1:
-        return 0.5
+        return 0.55
     else:
-        return 0.0
+        return 0.05
 
 
 # ---------------------------------------------------------------------------
@@ -127,7 +129,7 @@ def grade_step(
 ) -> float:
     """
     Grade a single step's finding against the ground truth for the current page.
-    Returns float in [0.0, 1.0].
+    Returns float in [0.01, 0.99] (avoids extreme overconfidence).
     """
     score = 0.0
 
@@ -150,7 +152,7 @@ def grade_step(
         else:
             # Penalty for false positive (fabricating a problem)
             score -= 0.10
-        return max(min(score, 1.0), 0.0)
+        return max(min(score, 0.99), 0.01)
 
     # --- CASE 2: Page has real problem(s) ---
     best_match = find_best_matching_problem(action, ground_truth_problems)
@@ -161,7 +163,7 @@ def grade_step(
             score -= 0.20  # Penalty for false negative
         elif action.finding_type == "ambiguous":
             score += 0.05  # Tiny credit for at least being uncertain
-        return max(min(score, 1.0), 0.0)
+        return max(min(score, 0.99), 0.01)
 
     prob = best_match
 
@@ -204,7 +206,7 @@ def grade_step(
     ):
         score += 0.07
 
-    return max(min(score, 1.0), 0.0)
+    return max(min(score, 0.99), 0.01)
 
 
 # ---------------------------------------------------------------------------
@@ -228,6 +230,7 @@ def compute_step_reward(
     """
     Convert the step grade into the actual reward signal.
     Provides continuous partial progress + anti-exploit penalties.
+    Returns float in [0.01, 0.99] to avoid extremes.
     """
     base_reward = step_grade
 
@@ -247,7 +250,7 @@ def compute_step_reward(
     if len(action.recommendation.strip()) < 10:
         base_reward -= 0.15
 
-    return max(min(base_reward, 1.0), -0.5)
+    return max(min(base_reward, 0.99), 0.01)
 
 
 # ---------------------------------------------------------------------------

@@ -111,12 +111,12 @@ def log_step(step: int, action: str, reward: float, done: bool, error=None):
     )
 
 
-def log_end(success: bool, steps: int, score: float, rewards: List[float]):
+def log_end(success: bool, steps: int, rewards: List[float]):
+    reward_str = ",".join(f"{r:.2f}" for r in rewards)
     print(
         f"[END] success={_format_log_value(success)} "
         f"steps={_format_log_value(steps)} "
-        f"score={_format_log_value(score)} "
-        f"rewards={_format_log_value(rewards)}",
+        f"rewards={reward_str}",
         flush=True,
     )
 
@@ -339,7 +339,7 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> Dict[str, An
 
             log_step(
                 step=step,
-                action=action_json_str[:200],
+                action=action_json_str,
                 reward=reward,
                 done=done,
                 error=error,
@@ -371,7 +371,7 @@ async def run_task(task_name: str, model_name: str = MODEL_NAME) -> Dict[str, An
                 await env.close()
             except Exception as e:
                 print(f"[DEBUG] env.close() error: {e}", flush=True)
-        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
+        log_end(success=success, steps=steps_taken, rewards=rewards)
 
     return {
         "score": score,

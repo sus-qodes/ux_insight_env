@@ -37,13 +37,14 @@ if not _STATIC.exists():
     _STATIC.mkdir(parents=True, exist_ok=True)
 
 # Read HTML files upfront to serve via routes (avoids static file mount issues)
-_INDEX_HTML = (_STATIC / "index.html").read_text(encoding="utf-8")
+_LANDING_HTML = (_STATIC / "index.html").read_text(encoding="utf-8")
+_OVERVIEW_HTML = (_STATIC / "overview.html").read_text(encoding="utf-8")
 _PLAYGROUND_HTML = (_STATIC / "playground.html").read_text(encoding="utf-8")
 _DOCS_HTML = (_STATIC / "docs.html").read_text(encoding="utf-8")
 
-# Remove OpenEnv's default routes (gradiio ui) to use our custom pages
-# Filter out paths that conflict with our custom UI
-_EXCLUDED_PATHS = {"/", "/web", "/documentation", "/config"}
+# Remove OpenEnv's default routes (gradiio ui) ONLY for "/" to use our landing page
+# Keep "/config" and other endpoints available
+_EXCLUDED_PATHS = {"/"}  # Only exclude "/" root, preserve OpenEnv's other UI routes
 app.router.routes = [
     r for r in app.router.routes
     if not (hasattr(r, "path") and r.path in _EXCLUDED_PATHS)
@@ -56,8 +57,14 @@ app.router.routes = [
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def landing_page():
-    """Serve the project landing page with full documentation and demo info."""
-    return _INDEX_HTML
+    """Serve the landing page with space theme and navigation buttons."""
+    return _LANDING_HTML
+
+
+@app.get("/overview", response_class=HTMLResponse, include_in_schema=False)
+async def overview_page():
+    """Serve the project overview page with full documentation and demo info."""
+    return _OVERVIEW_HTML
 
 
 @app.get("/web", response_class=HTMLResponse, include_in_schema=False)
