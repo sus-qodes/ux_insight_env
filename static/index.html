@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>UX Insight Analyst</title>
+<link rel="stylesheet" href="/static/css/navbar.css">
 <style>
 :root {
   --bg: #09090b;
@@ -299,12 +300,19 @@ footer a:hover {
 
     <!-- Our Custom Playgrounds Section -->
     <div class="nav-section">
-      <div class="section-label">🎮 Custom Interfaces</div>
+      <div class="section-label">🎮 Playgrounds</div>
       <div class="nav-buttons">
         <a href="/web" class="nav-btn">
+          <div class="nav-btn-icon">⚙️</div>
+          <div class="nav-btn-label">OpenEnv Playground</div>
+          <div class="nav-btn-desc">Default environment interface</div>
+          <div class="badge">Official</div>
+        </a>
+
+        <a href="/custom-playground" class="nav-btn">
           <div class="nav-btn-icon">🎮</div>
           <div class="nav-btn-label">Custom Playground</div>
-          <div class="nav-btn-desc">Interactive HTML interface</div>
+          <div class="nav-btn-desc">Enhanced interactive interface</div>
           <div class="badge">Recommended</div>
         </a>
 
@@ -363,6 +371,9 @@ function createParticles() {
 
 createParticles();
 </script>
+
+<!-- Load navbar -->
+<script src="/static/js/navbar.js"></script>
 
 </body>
 </html>
