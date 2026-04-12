@@ -11,10 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
         </button>
         <ul class="navbar-menu">
           <li><a href="/" class="nav-link">Home</a></li>
-          <li><a href="/overview" class="nav-link">Overview</a></li>
           <li><a href="/documentation" class="nav-link">Documentation</a></li>
-          <li><a href="/web" class="nav-link">OpenEnv</a></li>
           <li><a href="/custom-playground" class="nav-link">Playground</a></li>
+          <li><a href="/web" class="nav-link">OpenEnv</a></li>
           <li><a href="/config" class="nav-link">Template</a></li>
         </ul>
       </div>
@@ -52,3 +51,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+

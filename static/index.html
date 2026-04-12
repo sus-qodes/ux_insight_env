@@ -1,379 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UX Insight Analyst</title>
-<link rel="stylesheet" href="/static/css/navbar.css">
-<style>
-:root {
-  --bg: #09090b;
-  --surface: #111113;
-  --surface-2: #18181b;
-  --border: #27272a;
-  --text: #a1a1aa;
-  --text-bright: #d4d4d8;
-  --heading: #fafafa;
-  --white: #fff;
-  --accent: #10b981;
-  --mono: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-  --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
-}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UX Insight Analyst</title>
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+        html { scroll-behavior: smooth; }
 
-/* Animated background grid */
-.space-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #09090b 0%, #0f0f12 100%);
-  z-index: -2;
-}
+        body {
+            background-color: #09090b;
+            color: #d4d4d8;
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 56px;
+        }
 
-.grid {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  animation: drift 20s linear infinite;
-  z-index: -1;
-}
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-@keyframes drift {
-  0% { transform: translate(-40px, -40px); }
-  100% { transform: translate(0, 0); }
-}
+        .hero {
+            padding: 80px 0;
+        }
 
-/* Particles */
-.particle {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: float 20s infinite ease-in-out;
-}
+        .logo-text {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #fafafa;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
 
-@keyframes float {
-  0%, 100% { opacity: 0; transform: translate(0, 0); }
-  50% { opacity: 1; transform: translate(var(--tx), var(--ty)); }
-}
+        .subtitle {
+            font-size: 15px;
+            color: #d4d4d8;
+            max-width: 700px;
+            line-height: 1.7;
+            margin-bottom: 64px;
+        }
 
-/* Container */
-.container {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 24px;
-  text-align: center;
-}
+        .section {
+            margin-bottom: 56px;
+        }
 
-.hero {
-  max-width: 900px;
-}
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #27272a;
+        }
 
-.logo-text {
-  font-size: 48px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: var(--white);
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  animation: fadeInDown 0.8s ease-out;
-}
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
 
-.subtitle {
-  font-size: 18px;
-  color: var(--text-bright);
-  margin-bottom: 48px;
-  max-width: 700px;
-  line-height: 1.6;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
-}
+        .nav-card {
+            border: 1px solid #27272a;
+            background-color: #111113;
+            padding: 28px;
+            text-decoration: none;
+            color: #d4d4d8;
+            transition: all 0.15s;
+            display: block;
+        }
 
-.nav-section {
-  margin-bottom: 60px;
-  animation: fadeInUp 0.8s ease-out 0.3s both;
-}
+        .nav-card:hover {
+            border-color: #a1a1aa;
+            background-color: #18181b;
+            color: #fafafa;
+        }
 
-.section-label {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text);
-  margin-bottom: 16px;
-  text-align: center;
-}
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fafafa;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
 
-.nav-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-}
+        .card-desc {
+            font-size: 12px;
+            color: #a1a1aa;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
 
-.nav-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 32px 24px;
-  background: linear-gradient(135deg, rgba(17, 17, 19, 0.8), rgba(15, 15, 18, 0.8));
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-decoration: none;
-  color: var(--text-bright);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
+        .card-label {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            color: #09090b;
+            background-color: #fafafa;
+            padding: 2px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
 
-.nav-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  transition: left 0.5s ease;
-}
+        footer {
+            border-top: 1px solid #27272a;
+            padding: 40px 0;
+            text-align: center;
+            font-size: 12px;
+            color: #a1a1aa;
+        }
 
-.nav-btn:hover {
-  border-color: var(--white);
-  background: linear-gradient(135deg, rgba(17, 17, 19, 1), rgba(15, 15, 18, 1));
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(255, 255, 255, 0.1);
-  color: var(--white);
-}
+        footer a {
+            color: #d4d4d8;
+            text-decoration: none;
+        }
 
-.nav-btn:hover::before {
-  left: 100%;
-}
+        footer a:hover {
+            color: #fafafa;
+        }
 
-.nav-btn-icon {
-  font-size: 32px;
-  min-width: 32px;
-  min-height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
 
-.nav-btn-label {
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
+            .hero {
+                padding: 60px 0;
+            }
 
-.nav-btn-desc {
-  font-size: 12px;
-  color: var(--text);
-  text-transform: none;
-  letter-spacing: normal;
-}
+            .logo-text {
+                font-size: 32px;
+            }
 
-.badge {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-  background: rgba(16, 185, 129, 0.2);
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  border-radius: 4px;
-  text-transform: uppercase;
-  margin-top: 8px;
-}
+            .subtitle {
+                font-size: 14px;
+                margin-bottom: 48px;
+            }
 
-/* Footer */
-footer {
-  position: relative;
-  z-index: 1;
-  padding: 24px;
-  text-align: center;
-  font-size: 13px;
-  color: var(--text);
-  border-top: 1px solid var(--border);
-}
+            .section {
+                margin-bottom: 40px;
+            }
 
-footer a {
-  color: var(--text-bright);
-  text-decoration: none;
-}
-
-footer a:hover {
-  color: var(--white);
-}
-
-/* Animations */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .logo-text { font-size: 36px; }
-  .subtitle { font-size: 16px; }
-  .nav-buttons { grid-template-columns: 1fr; }
-  .nav-btn { padding: 28px 20px; }
-  .nav-btn-label { font-size: 14px; }
-}
-
-@media (max-width: 480px) {
-  .logo-text { font-size: 28px; }
-  .subtitle { font-size: 14px; }
-  .nav-btn-icon { font-size: 28px; }
-  .nav-section { margin-bottom: 40px; }
-  footer { padding: 16px; font-size: 12px; }
-}
-</style>
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="hero">
+            <div class="logo-text">UX Insight Analyst</div>
+            <div class="subtitle">
+                OpenEnv Reinforcement Learning environment for interpreting e-commerce behavioral analytics and producing actionable UX recommendations.
+            </div>
 
-<div class="space-bg">
-  <div class="grid"></div>
-</div>
+            <!-- Official Section -->
+            <div class="section">
+                <div class="section-title">Official OpenEnv Interface</div>
+                <div class="nav-grid">
+                    <a href="/config" class="nav-card">
+                        <div class="card-title">Template UI</div>
+                        <div class="card-desc">OpenEnv default template interface</div>
+                        <div class="card-label">Official</div>
+                    </a>
+                    <a href="/web" class="nav-card">
+                        <div class="card-title">OpenEnv Playground</div>
+                        <div class="card-desc">Default environment Gradio interface</div>
+                        <div class="card-label">Official</div>
+                    </a>
+                </div>
+            </div>
 
-<div class="container">
-  <div class="hero">
-    <div class="logo-text">UX Insight Analyst</div>
-    <div class="subtitle">
-      OpenEnv Reinforcement Learning environment for behavioral analytics interpretation
+            <!-- Custom Section -->
+            <div class="section">
+                <div class="section-title">Custom Interactive Interface</div>
+                <div class="nav-grid">
+                    <a href="/custom-playground" class="nav-card">
+                        <div class="card-title">Playground</div>
+                        <div class="card-desc">Enhanced interactive testing environment with real-time analytics display</div>
+                        <div class="card-label">Recommended</div>
+                    </a>
+                    <a href="/documentation" class="nav-card">
+                        <div class="card-title">Documentation</div>
+                        <div class="card-desc">API reference and implementation guide</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Resources Section -->
+            <div class="section">
+                <div class="section-title">Resources</div>
+                <div class="nav-grid">
+                    <a href="/overview" class="nav-card">
+                        <div class="card-title">Overview</div>
+                        <div class="card-desc">Full project documentation with task descriptions and baseline results</div>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- OpenEnv Template Playground Section -->
-    <div class="nav-section">
-      <div class="section-label">🔌 OpenEnv Template</div>
-      <div class="nav-buttons">
-        <a href="/config" class="nav-btn">
-          <div class="nav-btn-icon">⚙️</div>
-          <div class="nav-btn-label">Template UI</div>
-          <div class="nav-btn-desc">OpenEnv default interface</div>
-          <div class="badge">Official</div>
-        </a>
-      </div>
-    </div>
+    <footer>
+        <p>UX Insight Analyst · Built with OpenEnv</p>
+    </footer>
 
-    <!-- Our Custom Playgrounds Section -->
-    <div class="nav-section">
-      <div class="section-label">🎮 Playgrounds</div>
-      <div class="nav-buttons">
-        <a href="/web" class="nav-btn">
-          <div class="nav-btn-icon">⚙️</div>
-          <div class="nav-btn-label">OpenEnv Playground</div>
-          <div class="nav-btn-desc">Default environment interface</div>
-          <div class="badge">Official</div>
-        </a>
-
-        <a href="/custom-playground" class="nav-btn">
-          <div class="nav-btn-icon">🎮</div>
-          <div class="nav-btn-label">Custom Playground</div>
-          <div class="nav-btn-desc">Enhanced interactive interface</div>
-          <div class="badge">Recommended</div>
-        </a>
-
-        <a href="/documentation" class="nav-btn">
-          <div class="nav-btn-icon">📚</div>
-          <div class="nav-btn-label">Custom Docs</div>
-          <div class="nav-btn-desc">API reference & guides</div>
-        </a>
-      </div>
-    </div>
-
-    <!-- Documentation Section -->
-    <div class="nav-section">
-      <div class="section-label">📖 Learn More</div>
-      <div class="nav-buttons">
-        <a href="/overview" class="nav-btn">
-          <div class="nav-btn-icon">📋</div>
-          <div class="nav-btn-label">Overview</div>
-          <div class="nav-btn-desc">Full project documentation</div>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<footer>
-  <p>UX Insight Analyst · <a href="/health">Health Check</a> · Built with <a href="https://github.com/meta-pytorch/openenv">OpenEnv</a></p>
-</footer>
-
-<script>
-// Generate particles on page load
-function createParticles() {
-  const container = document.querySelector('.space-bg');
-  const particleCount = Math.min(30, Math.max(10, window.innerWidth / 50));
-
-  for (let i = 0; i < particleCount; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-
-    const x = Math.random() * window.innerWidth;
-    const y = Math.random() * window.innerHeight;
-    const tx = (Math.random() - 0.5) * 200;
-    const ty = (Math.random() - 0.5) * 200;
-    const delay = Math.random() * 5;
-
-    particle.style.left = x + 'px';
-    particle.style.top = y + 'px';
-    particle.style.setProperty('--tx', tx + 'px');
-    particle.style.setProperty('--ty', ty + 'px');
-    particle.style.animationDelay = delay + 's';
-    particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-
-    container.appendChild(particle);
-  }
-}
-
-createParticles();
-</script>
-
-<!-- Load navbar -->
-<script src="/static/js/navbar.js"></script>
-
+    <script src="/static/js/navbar.js"></script>
 </body>
 </html>

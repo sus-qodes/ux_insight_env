@@ -38,7 +38,6 @@ if not _STATIC.exists():
     _STATIC.mkdir(parents=True, exist_ok=True)
 
 # Read HTML files upfront to serve via routes (avoids static file mount issues)
-_LANDING_HTML = (_STATIC / "index.html").read_text(encoding="utf-8")
 _OVERVIEW_HTML = (_STATIC / "overview.html").read_text(encoding="utf-8")
 _PLAYGROUND_HTML = (_STATIC / "playground.html").read_text(encoding="utf-8")
 _DOCS_HTML = (_STATIC / "docs.html").read_text(encoding="utf-8")
@@ -103,9 +102,9 @@ app.add_middleware(NavbarInjectionMiddleware)
 # ---------------------------------------------------------------------------
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
-async def landing_page():
-    """Serve the landing page with space theme and navigation buttons."""
-    return _LANDING_HTML
+async def root_page():
+    """Serve the overview page at root."""
+    return _OVERVIEW_HTML
 
 
 @app.get("/overview", response_class=HTMLResponse, include_in_schema=False)
