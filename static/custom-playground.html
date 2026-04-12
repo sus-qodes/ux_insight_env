@@ -298,12 +298,108 @@
             margin-top: 4px;
         }
 
+        /* Control panel - top section with buttons and difficulty */
+        .control-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+            align-items: flex-start;
+        }
+
+        .control-section {
+            border: 1px solid #27272a;
+            background-color: #111113;
+            padding: 16px;
+        }
+
+        .control-section .label {
+            margin-bottom: 8px;
+        }
+
+        /* Step progress visualization */
+        .step-indicator {
+            border: 1px solid #27272a;
+            background-color: #111113;
+            padding: 16px;
+            grid-column: 1 / -1;
+        }
+
+        .step-progress {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .step-node {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #27272a;
+            background-color: #09090b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #a1a1aa;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-node.active {
+            background-color: #fafafa;
+            color: #09090b;
+            border-color: #fafafa;
+            animation: pulse-step 0.5s ease-out;
+        }
+
+        .step-node.completed {
+            background-color: #111113;
+            border-color: #a1a1aa;
+            color: #fafafa;
+        }
+
+        @keyframes pulse-step {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .step-label {
+            font-size: 10px;
+            color: #a1a1aa;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* Two-column buttons */
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .button-group .button {
+            margin: 0;
+        }
+
         @media (max-width: 1024px) {
             .main-grid {
                 grid-template-columns: 1fr;
             }
             .results-grid {
                 grid-template-columns: 1fr;
+            }
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            .step-indicator {
+                grid-column: 1;
+            }
+            .button-group {
+                grid-template-columns: 1fr 1fr;
             }
         }
     </style>
@@ -315,7 +411,49 @@
             <div class="subtitle">Interactive Testing Environment</div>
         </div>
 
-        <div class="main-grid">
+        <!-- STEP PROGRESS INDICATOR -->
+        <div class="step-indicator">
+            <div style="margin-bottom: 12px;">
+                <div class="panel-title" style="margin-bottom: 10px;">Episode Progress</div>
+            </div>
+            <div class="step-progress" id="stepProgress">
+                <!-- Steps will be generated dynamically -->
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid #27272a;">
+                <div style="font-size: 11px;">
+                    <span style="color: #a1a1aa;">Step:</span> <span style="color: #fafafa; font-family: monospace;" id="progressStep">0</span>
+                </div>
+                <div style="font-size: 11px;">
+                    <span style="color: #a1a1aa;">Score:</span> <span style="color: #fafafa; font-family: monospace;" id="progressScore">0.00</span>
+                </div>
+                <div style="font-size: 11px;">
+                    <span style="color: #a1a1aa;">Status:</span> <span style="color: #fafafa; font-family: monospace;" id="progressStatus">waiting</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL PANEL - Difficulty & Buttons -->
+        <div class="control-panel">
+            <div class="control-section">
+                <label class="label">Difficulty</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+                <div class="helper-text">Select task difficulty</div>
+            </div>
+
+            <div class="control-section">
+                <label class="label" style="color: transparent; height: 17px;">Action</label>
+                <button class="button" onclick="reset()">Reset Episode</button>
+            </div>
+
+            <div class="control-section">
+                <label class="label" style="color: transparent; height: 17px;">Submit</label>
+                <button class="button" onclick="submit()" id="submitBtn" disabled>Submit Analysis</button>
+            </div>
+        </div>
             <!-- ANALYTICS DATA PANEL -->
             <div class="panel">
                 <div class="panel-header">
@@ -339,12 +477,6 @@
                     <div class="status-bar">
                         <div class="status-dot" id="statusDot"></div>
                         <div class="status-text" id="statusText">Waiting for reset</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label">Task Seed</label>
-                        <input type="text" id="taskId" placeholder="e.g., medium" value="medium">
-                        <div class="helper-text">Task difficulty or seed identifier</div>
                     </div>
 
                     <div class="form-group">
@@ -391,9 +523,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="label">Recommendation (min 20 chars)</label>
+                        <label class="label">Recommendation (minimum 20 words)</label>
                         <textarea id="recommendation" placeholder="Specific, actionable fix..."></textarea>
-                        <div class="helper-text">Must mention the element and specific change</div>
+                        <div class="helper-text">Minimum 20 words. Must mention element and specific change.</div>
                     </div>
 
                     <div class="form-group">
@@ -422,14 +554,6 @@
                     <div class="form-group">
                         <label class="label">Confidence (0.0 - 1.0)</label>
                         <input type="number" id="confidence" min="0" max="1" step="0.01" value="0.5">
-                    </div>
-
-                    <div class="form-group">
-                        <button class="button" onclick="reset()">Reset Episode</button>
-                    </div>
-
-                    <div class="form-group">
-                        <button class="button" onclick="submit()" id="submitBtn" disabled>Submit Analysis</button>
                     </div>
                 </div>
             </div>
@@ -501,12 +625,54 @@
     <script>
         let episodeActive = false;
         let currentObservation = null;
+        let totalSteps = 0;
 
         function setStatus(text, active = false) {
             const dot = document.getElementById('statusDot');
             const textEl = document.getElementById('statusText');
             textEl.textContent = text;
             dot.classList.toggle('active', active);
+        }
+
+        function generateStepIndicators(total) {
+            const container = document.getElementById('stepProgress');
+            container.innerHTML = '';
+            totalSteps = total;
+
+            for (let i = 1; i <= Math.min(total, 10); i++) {
+                const node = document.createElement('div');
+                node.id = `step-${i}`;
+                node.className = 'step-node';
+                node.textContent = i;
+                container.appendChild(node);
+            }
+
+            if (total > 10) {
+                const more = document.createElement('div');
+                more.style.color = '#a1a1aa';
+                more.style.fontSize = '11px';
+                more.style.padding = '0 8px';
+                more.textContent = `... +${total - 10}`;
+                container.appendChild(more);
+            }
+        }
+
+        function updateStepVisual(currentStep, score) {
+            document.getElementById('progressStep').textContent = currentStep;
+            document.getElementById('progressScore').textContent = score.toFixed(4);
+
+            for (let i = 1; i <= Math.min(totalSteps, 10); i++) {
+                const node = document.getElementById(`step-${i}`);
+                if (!node) continue;
+
+                node.classList.remove('active', 'completed');
+                if (i === currentStep) {
+                    node.classList.add('active');
+                    if (score > 0.5) node.classList.add('completed');
+                } else if (i < currentStep) {
+                    node.classList.add('completed');
+                }
+            }
         }
 
         function displayAnalytics(pageData) {
@@ -548,11 +714,7 @@
         }
 
         async function reset() {
-            const taskId = document.getElementById('taskId').value.trim();
-            if (!taskId) {
-                setStatus('Error: Task seed required', false);
-                return;
-            }
+            const difficulty = document.getElementById('difficulty').value;
 
             setStatus('Resetting...', true);
 
@@ -560,7 +722,7 @@
                 const response = await fetch('/reset', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ task_id: taskId })
+                    body: JSON.stringify({ task_id: difficulty })
                 });
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -568,6 +730,10 @@
 
                 currentObservation = data.observation;
                 episodeActive = true;
+
+                generateStepIndicators(data.observation.total_steps);
+                updateStepVisual(data.observation.current_step, data.observation.cumulative_score || 0);
+                document.getElementById('progressStatus').textContent = 'active';
 
                 displayAnalytics(data.observation.current_page_data);
                 document.getElementById('submitBtn').disabled = false;
@@ -589,13 +755,14 @@
             const rec = document.getElementById('recommendation').value.trim();
             const elem = document.getElementById('element').value.trim();
 
-            if (rec.length < 20) {
-                setStatus('Error: Recommendation min 20 chars', false);
+            if (!elem) {
+                setStatus('Error: Element required', false);
                 return;
             }
 
-            if (!elem) {
-                setStatus('Error: Element required', false);
+            const wordCount = rec.split(/\s+/).filter(w => w.length > 0).length;
+            if (wordCount < 20) {
+                setStatus(`Error: Recommendation minimum 20 words (${wordCount} provided)`, false);
                 return;
             }
 
@@ -622,6 +789,9 @@
 
                 currentObservation = data.observation;
                 const done = data.observation.done;
+
+                updateStepVisual(data.observation.current_step, data.observation.cumulative_score);
+                document.getElementById('progressStatus').textContent = done ? 'complete' : 'active';
 
                 displayResults(data.observation, data.reward);
                 document.getElementById('resultsSection').style.display = 'grid';
@@ -652,6 +822,7 @@
 
         window.addEventListener('load', () => {
             setStatus('Ready', true);
+            document.getElementById('progressStatus').textContent = 'waiting';
         });
     </script>
 </body>
