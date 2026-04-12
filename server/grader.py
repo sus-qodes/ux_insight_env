@@ -262,7 +262,7 @@ def compute_priority_ranking_score(
     embedded_problem_ids: List[str],
 ) -> float:
     """Score how well the agent ranked issues by severity.
-    1.0 if perfectly ordered critical > high > medium > low, 0.0 if reversed."""
+    Returns value in [0.01, 0.99]."""
     issue_findings = [f for f in findings if f.finding_type == "issue"]
     if len(issue_findings) < 2:
         return 0.5  # Not enough data to judge ranking
@@ -279,7 +279,8 @@ def compute_priority_ranking_score(
             if severities[i] >= severities[j]:
                 correct += 1
 
-    return correct / total if total > 0 else 0.5
+    raw = correct / total if total > 0 else 0.5
+    return max(min(raw, 0.99), 0.01)
 
 
 def compute_red_herring_score(
@@ -287,7 +288,7 @@ def compute_red_herring_score(
     embedded_problem_ids: List[str],
 ) -> float:
     """Score how well the agent handled red herrings.
-    1.0 if all red herrings correctly flagged as no_issue, 0.0 if all mislabeled."""
+    Returns value in [0.01, 0.99]."""
     # We need to know which findings correspond to red herring pages
     # For simplicity: any finding with finding_type="no_issue" on a page that only has
     # red herrings is counted as correct
@@ -295,14 +296,16 @@ def compute_red_herring_score(
     # Give partial credit based on how many no_issues the agent submitted
     # (in hard task with 2 red herrings, ideal is at least 2 no_issue findings)
     expected_no_issues = 2  # hard task has 2 red herrings
-    return min(no_issue_count / expected_no_issues, 1.0) if expected_no_issues > 0 else 1.0
+    raw = min(no_issue_count / expected_no_issues, 1.0) if expected_no_issues > 0 else 0.95
+    return max(min(raw, 0.99), 0.01)
 
 
 def compute_impact_estimate_score(findings: List[FindingEntry]) -> float:
-    """Score impact estimate quality. Rewards specific numerical estimates."""
+    """Score impact estimate quality. Rewards specific numerical estimates.
+    Returns value in [0.01, 0.99]."""
     issue_findings = [f for f in findings if f.finding_type == "issue"]
     if not issue_findings:
-        return 0.0
+        return 0.01
 
     scores = []
     for f in issue_findings:
@@ -318,9 +321,10 @@ def compute_impact_estimate_score(findings: List[FindingEntry]) -> float:
         # Not just "N/A"
         if est.strip() not in ("n/a", "na", "none", ""):
             s += 0.2
-        scores.append(min(s, 1.0))
+        scores.append(min(s, 0.99))
 
-    return sum(scores) / len(scores)
+    raw = sum(scores) / len(scores) if scores else 0.01
+    return max(min(raw, 0.99), 0.01)
 
 
 def count_false_positives(

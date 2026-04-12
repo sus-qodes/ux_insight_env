@@ -1,11 +1,9 @@
 # server/app.py
 # FastAPI server entry point using OpenEnv's create_app factory.
 # Uses mandatory dual-import pattern for both in-repo and Docker compatibility.
-# Web interface is pure HTML/JavaScript served at /web (no Gradio).
 
 from pathlib import Path
 from fastapi.responses import HTMLResponse
-from starlette.middleware.base import BaseHTTPMiddleware
 
 try:
     from ..models import UXAction, UXObservation
@@ -41,7 +39,6 @@ if not _STATIC.exists():
 _OVERVIEW_HTML = (_STATIC / "overview.html").read_text(encoding="utf-8")
 _PLAYGROUND_HTML = (_STATIC / "playground.html").read_text(encoding="utf-8")
 _DOCS_HTML = (_STATIC / "docs.html").read_text(encoding="utf-8")
-_CUSTOM_PLAYGROUND_HTML = (_STATIC / "custom-playground.html").read_text(encoding="utf-8")
 
 # Remove OpenEnv's default routes (gradiio ui) ONLY for "/" to use our landing page
 # Keep "/config" and other endpoints available
@@ -52,49 +49,6 @@ app.router.routes = [
 ]
 
 # ---------------------------------------------------------------------------
-# Middleware to inject navbar into Gradio routes (/web and /config)
-# ---------------------------------------------------------------------------
-
-class NavbarInjectionMiddleware(BaseHTTPMiddleware):
-    """Injects navbar CSS and script into HTML responses for Gradio routes."""
-
-    async def dispatch(self, request, call_next):
-        response = await call_next(request)
-
-        # Only process HTML responses from /web and /config
-        if request.url.path not in ["/web", "/config"]:
-            return response
-
-        # Check if response has content-type of text/html
-        content_type = response.headers.get("content-type", "")
-        if "text/html" not in content_type:
-            return response
-
-        try:
-            # Read the response body
-            body = b""
-            async for chunk in response.body_iterator:
-                body += chunk
-
-            html_content = body.decode("utf-8")
-
-            # Inject navbar CSS link in <head>
-            navbar_css = '<link rel="stylesheet" href="/static/css/navbar.css">'
-            html_content = html_content.replace("</head>", f"{navbar_css}\n</head>")
-
-            # Inject navbar script before closing </body>
-            navbar_script = '<script src="/static/js/navbar.js"></script>'
-            html_content = html_content.replace("</body>", f"{navbar_script}\n</body>")
-
-            # Return modified response
-            from fastapi.responses import HTMLResponse
-            return HTMLResponse(content=html_content, status_code=response.status_code)
-        except Exception as e:
-            # If injection fails, return original response
-            return response
-
-# Add middleware to the app
-app.add_middleware(NavbarInjectionMiddleware)
 
 # ---------------------------------------------------------------------------
 # Custom pages — landing page, playground, and documentation
@@ -123,12 +77,6 @@ async def playground_page():
 async def documentation_page():
     """Serve the full API and usage documentation."""
     return _DOCS_HTML
-
-
-@app.get("/custom-playground", response_class=HTMLResponse, include_in_schema=False)
-async def custom_playground_page():
-    """Serve the custom interactive playground."""
-    return _CUSTOM_PLAYGROUND_HTML
 
 
 @app.get("/ground_truth", include_in_schema=False)
@@ -186,6 +134,8 @@ def main():
     """Entry point for running the server directly."""
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=7860)
+
+
 
 
 if __name__ == "__main__":

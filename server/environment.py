@@ -223,7 +223,7 @@ class UXInsightEnvironment(Environment):
             pages_to_analyze=[p.page_name for p in self._pages_data],
             current_page_data=self._pages_data[0],
             findings_so_far=[],
-            cumulative_score=0.0,
+            cumulative_score=0.01,
             grader_feedback="",
             task_context={
                 "app_name": "StyleMart E-Commerce Platform",
@@ -332,12 +332,10 @@ class UXInsightEnvironment(Environment):
                 final_bonus = 0.0
             self._episode_rewards.append(final_bonus)
 
-        # Cumulative score normalized to [0, 1]
+        # Cumulative score normalized to (0.01, 0.99] to avoid exactly 0.0 or 1.0
         max_steps = MAX_STEPS_BY_TASK.get(self._task_id, 1)
-        cumulative_score = min(
-            max(sum(self._episode_rewards) / max_steps, 0.0),
-            1.0,
-        )
+        raw_score = sum(self._episode_rewards) / max_steps
+        cumulative_score = max(min(raw_score, 0.99), 0.01)
 
         info = {
             "step_grade": step_grade,
@@ -448,7 +446,9 @@ class UXInsightEnvironment(Environment):
 
         if cumulative_score is None:
             max_steps = MAX_STEPS_BY_TASK.get(self._task_id, 1)
-            cumulative_score = min(max(sum(self._episode_rewards) / max_steps, 0.0), 1.0)
+            raw_score = sum(self._episode_rewards) / max_steps
+            # Clamp to (0.01, 0.99) to avoid exactly 0.0 or 1.0
+            cumulative_score = max(min(raw_score, 0.99), 0.01)
 
         obs = UXObservation(
             task_id=self._task_id,
